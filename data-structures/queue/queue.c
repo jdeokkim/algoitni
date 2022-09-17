@@ -20,25 +20,25 @@
     SOFTWARE.
 */
 
-#define STACK_IMPLEMENTATION
-#include "stack.h"
+#define QUEUE_IMPLEMENTATION
+#include "queue.h"
 
 int main(void) {
-    Stack *s = stack_create();
+    Queue *q = queue_create();
 
-    stack_push(s, (Item) 10);
-    stack_push(s, (Item) 20);
-    stack_push(s, (Item) 30);
+    queue_enqueue(q, (Item) 10);
+    queue_enqueue(q, (Item) 20);
+    queue_enqueue(q, (Item) 30);
 
     for (;;) {
         Item i;
 
-        if (!stack_pop(s, &i)) break;
+        if (!queue_dequeue(q, &i)) break;
 
-        printf("%d (%ld)\n", i, stack_size(s));
+        printf("%d (%ld)\n", i, queue_size(q));
     }
 
-    stack_release(s);
-
+    queue_release(q);
+    
     return 0;
 }
