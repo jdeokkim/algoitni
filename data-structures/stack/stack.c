@@ -23,6 +23,8 @@
 #define STACK_IMPLEMENTATION
 #include "stack.h"
 
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/stack.out` */
+
 int main(void) {
     Stack *s = stack_create();
 

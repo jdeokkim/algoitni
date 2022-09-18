@@ -20,27 +20,29 @@
     SOFTWARE.
 */
 
-#define QUEUE_IMPLEMENTATION
-#include "queue.h"
+#define DEQUE_IMPLEMENTATION
+#include "deque.h"
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/queue.out` */
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/deque.out` */
 
 int main(void) {
-    Queue *q = queue_create();
+    Deque *d = deque_create();
 
-    queue_enqueue(q, (Item) 10);
-    queue_enqueue(q, (Item) 20);
-    queue_enqueue(q, (Item) 30);
+    deque_push_left(d, (Item) 20);
+    deque_push_right(d, (Item) 30);
+    deque_push_left(d, (Item) 10);
+    deque_push_right(d, (Item) 40);
 
-    for (;;) {
+    for (int i = 0; i < 4; i++) {
         Item i;
 
-        if (!queue_dequeue(q, &i)) break;
+        if (i % 2 == 0) deque_pop_left(d, &i);
+        else deque_pop_right(d, &i);
 
-        printf("%d (%ld)\n", i, queue_size(q));
+        printf("%d (%ld)\n", i, deque_size(d));
     }
 
-    queue_release(q);
+    deque_release(d);
     
     return 0;
 }

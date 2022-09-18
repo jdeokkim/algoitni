@@ -35,7 +35,7 @@ BINARY_PATH := bin
 SOURCE_PATH := .
 
 EXAMPLES := \
-	linked_list
+	deque
 
 SOURCES := $(EXAMPLES:%=$(SOURCE_PATH)/%.c)
 TARGETS := $(EXAMPLES:%=$(BINARY_PATH)/%.out)

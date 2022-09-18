@@ -20,27 +20,27 @@
     SOFTWARE.
 */
 
-#define QUEUE_IMPLEMENTATION
-#include "queue.h"
+#define RING_BUFFER_IMPLEMENTATION
+#include "ring_buffer.h"
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/queue.out` */
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/ring_buffer.out` */
 
 int main(void) {
-    Queue *q = queue_create();
+    RingBuffer *q = ring_buffer_create(8);
 
-    queue_enqueue(q, (Item) 10);
-    queue_enqueue(q, (Item) 20);
-    queue_enqueue(q, (Item) 30);
+    ring_buffer_enqueue(q, (Item) 10);
+    ring_buffer_enqueue(q, (Item) 20);
+    ring_buffer_enqueue(q, (Item) 30);
 
     for (;;) {
         Item i;
 
-        if (!queue_dequeue(q, &i)) break;
+        if (!ring_buffer_dequeue(q, &i)) break;
 
-        printf("%d (%ld)\n", i, queue_size(q));
+        printf("%d (%ld)\n", i, ring_buffer_size(q));
     }
 
-    queue_release(q);
+    ring_buffer_release(q);
     
     return 0;
 }

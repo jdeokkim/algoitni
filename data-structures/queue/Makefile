@@ -35,7 +35,8 @@ BINARY_PATH := bin
 SOURCE_PATH := .
 
 EXAMPLES := \
-	queue
+	queue       \
+	ring_buffer
 
 SOURCES := $(EXAMPLES:%=$(SOURCE_PATH)/%.c)
 TARGETS := $(EXAMPLES:%=$(BINARY_PATH)/%.out)
