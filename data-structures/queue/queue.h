@@ -98,6 +98,7 @@ static void _queue_node_clear(QueueNode *node) {
     if (node == NULL) return;
 
     _queue_node_clear(node->next);
+    
     _queue_node_release(node);
 }
 

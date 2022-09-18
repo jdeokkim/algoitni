@@ -69,8 +69,8 @@ size_t deque_size(Deque *d);
 
 /* 연결 리스트의 노드를 나타내는 구조체. */
 typedef struct DequeNode {
-    struct QueueNode *prev;  // 이 노드의 이전 노드.
-    struct QueueNode *next;  // 이 노드의 다음 노드.
+    struct DequeNode *prev;  // 이 노드의 이전 노드.
+    struct DequeNode *next;  // 이 노드의 다음 노드.
     Item value;              // 노드에 저장된 값.
 } DequeNode;
 
@@ -83,44 +83,133 @@ struct Deque {
 
 /* | 라이브러리 함수... | */
 
+/* 연결 리스트의 노드를 생성한다. */
+static DequeNode *_deque_node_create(Item i) {
+    DequeNode *node = malloc(sizeof(*node));
+
+    node->prev = node->next = NULL;
+    node->value = i;
+
+    return node;
+}
+
+/* 연결 리스트의 노드에 할당된 메모리를 해제한다. */
+static void _deque_node_release(DequeNode *node) {
+    if (node == NULL) return;
+
+    free(node);
+}
+
+/* 연결 리스트의 노드, 그리고 이 노드와 연결된 모든 노드에 할당된 메모리를 해제한다. */
+static void _deque_node_clear(DequeNode *node) {
+    if (node == NULL) return;
+
+    _deque_node_clear(node->prev);
+    _deque_node_clear(node->next);
+    
+    _deque_node_release(node);
+}
+
 /* 덱을 생성한다. */
 Deque *deque_create(void) {
-    /* TODO: ... */
+    return calloc(1, sizeof(Deque));
 }
 
 /* 덱에 할당된 메모리를 해제한다. */
 void deque_release(Deque *d) {
-    /* TODO: ... */
+    if (d == NULL) return;
+
+    d->length = 0;
+
+    _deque_node_clear(d->head);
+
+    free(d);
 }
 
 /* 덱의 왼쪽 끝에 새로운 항목을 추가한다. */
 bool deque_push_left(Deque *d, Item i) {
-    /* TODO: ... */
+    if (d == NULL) return false;
+
+    if (d->head == NULL) {
+        d->head = d->tail = _deque_node_create(i);
+    } else {
+        DequeNode *node = _deque_node_create(i);
+
+        node->next = d->head;
+        d->head->prev = node;
+
+        d->head = node;
+    }
+
+    d->length++;
+
+    return true;
 }
 
 /* 덱의 오른쪽 끝에 새로운 항목을 추가한다. */
 bool deque_push_right(Deque *d, Item i) {
-    /* TODO: ... */
+    if (d == NULL) return false;
+
+    if (d->head == NULL) {
+        d->head = d->tail = _deque_node_create(i);
+    } else {
+        DequeNode *node = _deque_node_create(i);
+
+        node->prev = d->tail;
+        d->tail->next = node;
+
+        d->tail = node;
+    }
+
+    d->length++;
+
+    return true;
 }
 
 /* 덱의 왼쪽 끝에 있는 항목을 꺼낸다. */
 bool deque_pop_left(Deque *d, Item *const i) {
-    /* TODO: ... */
+    if (deque_is_empty(d) || i == NULL) return false;
+
+    DequeNode *node = d->head->next;
+
+    *i = d->head->value;
+
+    _deque_node_release(d->head);
+
+    if (node == NULL) d->head = d->tail = NULL;
+    else d->head = node;
+
+    d->length--;
+
+    return true;
 }
 
 /* 덱의 오른쪽 끝에 있는 항목을 꺼낸다. */
 bool deque_pop_right(Deque *d, Item *const i) {
-    /* TODO: ... */
+    if (deque_is_empty(d) || i == NULL) return false;
+
+    DequeNode *node = d->tail->prev;
+
+    *i = d->tail->value;
+
+    _deque_node_release(d->tail);
+
+    if (node == NULL) d->head = d->tail = NULL;
+    else d->tail = node;
+
+    d->length--;
+
+    return true;
 }
 
 /* 덱이 비어 있는지 확인한다. */
 bool deque_is_empty(Deque *d) {
-    /* TODO: ... */
+    return (d == NULL) || (d->length <= 0);
 }
 
 /* 덱에 저장된 항목의 개수를 반환한다. */
 size_t deque_size(Deque *d) {
-    /* TODO: ... */
+    return (d != NULL) ? d->length : 0;
 }
 
 #endif // `DEQUE_IMPLEMENTATION`
