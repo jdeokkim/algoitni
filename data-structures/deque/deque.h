@@ -100,16 +100,6 @@ static void _deque_node_release(DequeNode *node) {
     free(node);
 }
 
-/* 연결 리스트의 노드, 그리고 이 노드와 연결된 모든 노드에 할당된 메모리를 해제한다. */
-static void _deque_node_clear(DequeNode *node) {
-    if (node == NULL) return;
-
-    _deque_node_clear(node->prev);
-    _deque_node_clear(node->next);
-    
-    _deque_node_release(node);
-}
-
 /* 덱을 생성한다. */
 Deque *deque_create(void) {
     return calloc(1, sizeof(Deque));
@@ -121,8 +111,16 @@ void deque_release(Deque *d) {
 
     d->length = 0;
 
-    _deque_node_clear(d->head);
+    DequeNode *node = d->head;
 
+    while (node != NULL) {
+        _deque_node_release(node->prev);
+
+        node = node->next;
+    }
+
+    _deque_node_release(d->tail);
+    
     free(d);
 }
 
@@ -176,8 +174,12 @@ bool deque_pop_left(Deque *d, Item *const i) {
 
     _deque_node_release(d->head);
 
-    if (node == NULL) d->head = d->tail = NULL;
-    else d->head = node;
+    if (node == NULL) {
+        d->head = d->tail = NULL;
+    } else {
+        node->prev = NULL;
+        d->head = node;
+    }
 
     d->length--;
 
@@ -194,8 +196,12 @@ bool deque_pop_right(Deque *d, Item *const i) {
 
     _deque_node_release(d->tail);
 
-    if (node == NULL) d->head = d->tail = NULL;
-    else d->tail = node;
+    if (node == NULL) {
+        d->head = d->tail = NULL;
+    } else {
+        node->next = NULL;
+        d->tail = node;
+    }
 
     d->length--;
 
