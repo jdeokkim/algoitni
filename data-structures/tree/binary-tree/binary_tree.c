@@ -20,27 +20,36 @@
     SOFTWARE.
 */
 
-#define QUEUE_IMPLEMENTATION
-#include "queue.h"
+#define BINARY_TREE_IMPLEMENTATION
+#include "binary_tree.h"
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/queue.out` */
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/binary_tree.out` */
+
+void on_binary_node_search(const BinaryNode *node);
 
 int main(void) {
-    Queue *q = queue_create();
+    BinaryTree *bt = bt_create((Item) 10);
 
-    queue_enqueue(q, (Item) 10);
-    queue_enqueue(q, (Item) 20);
-    queue_enqueue(q, (Item) 30);
-    
-    for (;;) {
-        Item i;
+    {
+        BinaryNode *twenty = bt_insert_left(bt_root(bt), 20);
+        
+        bt_insert_left(twenty, 30);
+        bt_insert_right(twenty, 50);
 
-        if (!queue_dequeue(q, &i)) break;
+        BinaryNode *fourty = bt_insert_right(bt_root(bt), 40);
 
-        printf("%d (%ld)\n", i, queue_size(q));
+        bt_insert_right(fourty, 70);
     }
 
-    queue_release(q);
+    bt_dfs_preorder(bt_root(bt), on_binary_node_search); printf("_\n");
+    bt_dfs_postorder(bt_root(bt), on_binary_node_search); printf("_\n");
+    bt_dfs_inorder(bt_root(bt), on_binary_node_search); printf("_\n");
+
+    bt_release(bt);
     
     return 0;
+}
+
+void on_binary_node_search(const BinaryNode *node) {
+    printf("%d (%d) -> ", node->value, bt_is_leaf(node));
 }
