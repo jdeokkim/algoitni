@@ -131,7 +131,7 @@ BinaryTree *bt_create(Item i) {
 void bt_release(BinaryTree *bt) {
     if (bt == NULL) return;
 
-    bt_dfs_postorder(bt_root(bt), (BinaryTreeSearchCb) _bt_node_release);
+    bt_dfs_postorder(bt->root, (BinaryTreeSearchCb) _bt_node_release);
 
     free(bt);
 }
@@ -324,7 +324,7 @@ BinaryNode *bt_get(BinaryTree *bt, Item i) {
     if (bt == NULL || bt->root == NULL) return NULL;
 
 #if 1
-    return _bt_get_helper(bt_root(bt), i);
+    return _bt_get_helper(bt->root, i);
 #else
     /* TODO: ... */
 #endif

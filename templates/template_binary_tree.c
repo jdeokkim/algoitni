@@ -20,36 +20,47 @@
     SOFTWARE.
 */
 
-#define BINARY_TREE_IMPLEMENTATION
-#include "binary_tree.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/binary_tree.out` */
+typedef struct BinaryNode {
+    struct BinaryNode *left, *right;
+    char value;
+} BinaryNode;
 
-void on_binary_node_search(const BinaryNode *node);
+BinaryNode *binary_node_create(char value);
+void binary_node_release(BinaryNode *node);
+BinaryNode *binary_node_get(BinaryNode *root, char value);
 
 int main(void) {
-    BinaryTree *bt = bt_create((Item) 10);
+    /* TODO: ... */
 
-    {
-        BinaryNode *twenty = bt_insert_left(bt_root(bt), (Item) 20);
-        
-        bt_insert_left(twenty, (Item) 30);
-        bt_insert_right(twenty, (Item) 50);
-
-        BinaryNode *fourty = bt_insert_right(bt_root(bt), (Item) 40);
-
-        bt_insert_right(fourty, (Item) 70);
-    }
-
-    bt_dfs_preorder(bt_root(bt), on_binary_node_search); printf("_\n");
-    bt_dfs_postorder(bt_root(bt), on_binary_node_search); printf("_\n");
-    bt_dfs_inorder(bt_root(bt), on_binary_node_search); printf("_\n");
-
-    bt_release(bt);
-    
     return 0;
 }
 
-void on_binary_node_search(const BinaryNode *node) {
-    printf("%d (%d) -> ", node->value, bt_is_leaf(node));
+BinaryNode *binary_node_create(char value) {
+    BinaryNode *node = malloc(sizeof(*node));
+
+    node->left = node->right = NULL;
+    node->value = value;
+
+    return node;
+}
+
+void binary_node_release(BinaryNode *node) {
+    if (node == NULL) return;
+
+    binary_node_release(node->left);
+    binary_node_release(node->right);
+
+    free(node);
+}
+
+BinaryNode *binary_node_get(BinaryNode *root, char value) {
+    if (root == NULL || root->value == value) return root;
+
+    BinaryNode *left = binary_node_get(root->left, value);
+    BinaryNode *right = binary_node_get(root->right, value);
+
+    return (left != NULL) ? left : right;
 }

@@ -20,31 +20,8 @@
     SOFTWARE.
 */
 
-#ifndef QUADTREE_H
-#define QUADTREE_H
+int main(void) {
+    /* TODO: ... */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-/* | 자료형 선언 및 정의... | */
-
-/* TODO: ... */
-
-/* | 라이브러리 함수... | */
-
-/* TODO: ... */
-
-#endif // `QUADTREE_H`
-
-#ifdef QUADTREE_IMPLEMENTATION
-
-/* | 자료형 선언 및 정의... | */
-
-/* TODO: ... */
-
-/* | 라이브러리 함수... | */
-
-/* TODO: ... */
-
-#endif // `QUADTREE_IMPLEMENTATION`
+    return 0;
+}
