@@ -20,36 +20,41 @@
     SOFTWARE.
 */
 
-#define BINARY_TREE_IMPLEMENTATION
-#include "binary_tree.h"
+#define BST_IMPLEMENTATION
+#include "bst.h"
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/binary_tree.out` */
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/bst.out` */
 
-void on_binary_node_search(const BinaryNode *node);
+static int on_bst_node_compare(Key k1, Key k2);
+static void on_bst_node_search(const BSTNode *node);
 
 int main(void) {
-    BinaryTree *bt = bt_create((Item) 10);
+    BST *bst = bst_create(on_bst_node_compare);
 
-    {
-        BinaryNode *twenty = bt_insert_left(bt_root(bt), (Item) 20);
-        
-        bt_insert_left(twenty, (Item) 30);
-        bt_insert_right(twenty, (Item) 50);
+    bst_put(bst, (Key) 50, (Value) 1);
+    bst_put(bst, (Key) 20, (Value) 2);
+    bst_put(bst, (Key) 70, (Value) 3);
+    bst_put(bst, (Key) 10, (Value) 4);
+    bst_put(bst, (Key) 30, (Value) 5);
 
-        BinaryNode *fourty = bt_insert_right(bt_root(bt), (Item) 40);
+    Value value;
 
-        bt_insert_right(fourty, (Item) 70);
-    }
+    if (bst_get(bst, (Key) 70, &value))
+        printf("%d\n", (int) value);
 
-    bt_dfs_preorder(bt_root(bt), on_binary_node_search); printf("_\n");
-    bt_dfs_postorder(bt_root(bt), on_binary_node_search); printf("_\n");
-    bt_dfs_inorder(bt_root(bt), on_binary_node_search); printf("_\n");
+    bst_dfs_preorder(bst_root(bst), on_bst_node_search); printf("_\n");
+    bst_dfs_postorder(bst_root(bst), on_bst_node_search); printf("_\n");
+    bst_dfs_inorder(bst_root(bst), on_bst_node_search); printf("_\n");
 
-    bt_release(bt);
-    
+    bst_release(bst);
+
     return 0;
 }
 
-void on_binary_node_search(const BinaryNode *node) {
-    printf("%d (%d) -> ", node->value, bt_is_leaf(node));
+static int on_bst_node_compare(Key k1, Key k2) {
+    return (k1 > k2) - (k1 < k2);
+}
+
+static void on_bst_node_search(const BSTNode *node) {
+    printf("%d (%d) -> ", (int) node->key, (int) node->value);
 }

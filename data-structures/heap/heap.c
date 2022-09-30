@@ -25,10 +25,10 @@
 
 /* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/heap.out` */
 
-static int heap_compare(Item i1, Item i2);
+static int on_heap_compare(Item i1, Item i2);
 
 int main(void) {
-    Heap *h = heap_create(heap_compare);
+    Heap *h = heap_create(on_heap_compare);
 
     heap_insert(h, (Item) 10);
     heap_insert(h, (Item) 50);
@@ -48,6 +48,6 @@ int main(void) {
     return 0;
 }
 
-static int heap_compare(Item i1, Item i2) {
+static int on_heap_compare(Item i1, Item i2) {
     return (i1 > i2) - (i1 < i2);
 }
