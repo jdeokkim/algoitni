@@ -29,7 +29,7 @@
 
 /* | 매크로 정의... | */
 
-#define HEAP_INIT_CAPACITY 32
+#define HEAP_INIT_CAPACITY 4
 
 /* | 자료형 선언 및 정의... | */
 
@@ -85,7 +85,7 @@ Heap *heap_create(HeapCompareCb func) {
     h->func = func;
 
     h->length = 0;
-    h->capacity = HEAP_INIT_CAPACITY; 
+    h->capacity = HEAP_INIT_CAPACITY + 1;
 
     h->ptr = malloc(h->capacity * sizeof(*(h->ptr)));
 
@@ -122,6 +122,17 @@ static void _heap_swim(Heap *h, int k) {
 /* 힙에 새로운 항목을 추가한다. */
 bool heap_insert(Heap *h, Item i) {
     if (h == NULL) return false;
+
+    if (h->length >= h->capacity) {
+        const size_t new_capacity = 2 * h->capacity;
+
+        Item *new_ptr = realloc(h->ptr, new_capacity * sizeof(*new_ptr));
+
+        if (new_ptr == NULL) return false;
+
+        h->capacity = new_capacity;
+        h->ptr = new_ptr;
+    }
 
     // 0번째 인덱스의 항목은 사용하지 않는다.
     h->ptr[++h->length] = i;

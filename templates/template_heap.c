@@ -118,7 +118,6 @@ int heap_delete_root(Heap *h, Item *const i) {
 
     *i = h->ptr[1];
 
-    // 힙의 루트 노드를 마지막 노드과 교환한다.
     h->ptr[1] = h->ptr[h->length];
     h->ptr[h->length--] = *i;
 
