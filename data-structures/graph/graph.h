@@ -71,6 +71,19 @@ size_t graph_edge_count(Graph *g);
 
 /* | 자료형 선언 및 정의... | */
 
+/* 그래프의 너비 우선 탐색용 큐의 노드를 나타내는 구조체. */
+typedef struct GQNode {
+    struct GQNode *next;  // 이 노드의 다음 노드.
+    int value;            // 노드에 저장된 값.
+} GQNode;
+
+/* 그래프의 너비 우선 탐색용 큐를 나타내는 구조체. */
+typedef struct GQueue {
+    GQNode *head;   // 큐의 연결 리스트의 첫 번째 노드.
+    GQNode *tail;   // 큐의 연결 리스트의 마지막 노드.
+    size_t length;  // 큐에 저장된 항목의 현재 개수.
+} GQueue;
+
 /* 그래프를 나타내는 구조체. */
 struct Graph {
     struct {
@@ -78,12 +91,88 @@ struct Graph {
         size_t length;    // (배열에 저장된 항목의 현재 개수.)
         size_t capacity;  // (배열에 들어있는 항목의 개수.)
     } *adjacency;
-    int *visited;         // 깊이 우선 탐색에서 각 정점의 방문 여부.
+    GQueue *queue;        // 그래프의 너비 우선 탐색에 사용되는 큐.
+    int *visited;         // 그래프 탐색에서 각 정점의 방문 여부.
     size_t vertex_count;  // 모든 정점들의 개수.
     size_t edge_count;    // 모든 간선들의 개수.
 };
 
 /* | 라이브러리 함수... | */
+
+/* 연결 리스트의 노드를 생성한다. */
+static GQNode *_gq_node_create(int value) {
+    GQNode *node = malloc(sizeof(*node));
+
+    node->next = NULL;
+    node->value = value;
+
+    return node;
+}
+
+/* 연결 리스트의 노드에 할당된 메모리를 해제한다. */
+static void _gq_node_release(GQNode *node) {
+    free(node);
+}
+
+/* 큐를 생성한다. */
+static GQueue *gq_create(void) {
+    return calloc(1, sizeof(GQueue));
+}
+
+/* 큐에 할당된 메모리를 해제한다. */
+void gq_release(GQueue *q) {
+    if (q == NULL) return;
+
+    q->length = 0;
+
+    GQNode *node = q->head;
+
+    while (node != NULL) {
+        GQNode *next = node->next;
+
+        _gq_node_release(node);
+
+        node = next;
+    }
+
+    free(q);
+}
+
+/* 큐에 새로운 항목을 추가한다. */
+static bool gq_enqueue(GQueue *q, int i) {
+    if (q == NULL) return false;
+
+    if (q->head == NULL) {
+        q->head = q->tail = _gq_node_create(i);
+    } else {
+        GQNode *node = _gq_node_create(i);
+
+        q->tail->next = node;
+        q->tail = node;
+    }
+
+    q->length++;
+
+    return true;
+}
+
+/* 큐에서 가장 먼저 추가된 항목을 꺼낸다. */
+static bool gq_dequeue(GQueue *q, int *const i) {
+    if (q == NULL || q->length <= 0 || i == NULL) return false;
+
+    GQNode *node = q->head->next;
+
+    *i = q->head->value;
+
+    _gq_node_release(q->head);
+
+    if (node == NULL) q->head = q->tail = NULL;
+    else q->head = node;
+
+    q->length--;
+
+    return true;
+}
 
 /* 그래프를 생성한다. */
 Graph *graph_create(int c) {
@@ -100,6 +189,7 @@ Graph *graph_create(int c) {
         );
     }
 
+    g->queue = gq_create();
     g->visited = malloc(c * sizeof(*(g->visited)));
 
     g->vertex_count = c;
@@ -114,6 +204,8 @@ void graph_release(Graph *g) {
 
     for (int i = 0; i < g->vertex_count; i++)
         free(g->adjacency[i].ptr);
+
+    gq_release(g->queue);
 
     free(g->visited), free(g->adjacency), free(g);
 }
@@ -188,7 +280,38 @@ void graph_dfs(Graph *g, int v, GraphNodeSearchCb func) {
 
 /* 그래프를 너비 우선 방식으로 탐색한다. */
 void graph_bfs(Graph *g, int v, GraphNodeSearchCb func) {
-    /* TODO: ... */
+    if (g == NULL || v >= g->vertex_count) return;
+
+    for (int i = 0; i < g->vertex_count; i++)
+        g->visited[i] = 0;
+
+    GQueue *q = g->queue;
+
+    // 큐에 시작 정점을 삽입한다.
+    gq_enqueue(q, v);
+
+    // 시작 정점도 미리 방문 표시를 한다.
+    g->visited[v] = 1;
+
+    int w = v;
+
+    while (q->length > 0) {
+        gq_dequeue(q, &w);
+
+        if (func != NULL) func(w);
+
+        // 큐에서 꺼낸 정점과 인접한 모든 노드를 확인한다.
+        for (int i = 0; i < g->adjacency[w].length; i++) {
+            int u = g->adjacency[w].ptr[i];
+
+            // 이미 방문한 정점은 확인하지 않는다.
+            if (g->visited[u]) continue;
+
+            g->visited[u] = 1;
+
+            gq_enqueue(q, u);
+        }
+    }
 }
 
 /* 그래프의 정점 `v`와 연결된 모든 정점들을 반환한다. */

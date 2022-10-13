@@ -52,6 +52,7 @@ int main(void) {
     }
 
     graph_dfs(g, 0, on_graph_node_search); printf("_\n");
+    graph_bfs(g, 0, on_graph_node_search); printf("_\n");
 
     free(values);
 

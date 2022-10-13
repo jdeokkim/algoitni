@@ -30,10 +30,19 @@ static int on_heap_compare(Item i1, Item i2);
 int main(void) {
     Heap *h = heap_create(on_heap_compare);
 
-    heap_insert(h, (Item) 10);
-    heap_insert(h, (Item) 50);
-    heap_insert(h, (Item) 30);
-    heap_insert(h, (Item) 20);
+    heap_insert(h, (Item) 23);
+    heap_insert(h, (Item) 56);
+    heap_insert(h, (Item) 11);
+    heap_insert(h, (Item) 9);
+    heap_insert(h, (Item) 56);
+    heap_insert(h, (Item) 99);
+    heap_insert(h, (Item) 27);
+    heap_insert(h, (Item) 34);
+
+    for (int i = 1; i <= h->length; i++)
+        printf("%d -> ", h->ptr[i]);
+
+    printf("_\n");
 
     for (;;) {
         Item i;

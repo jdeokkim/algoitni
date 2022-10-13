@@ -88,8 +88,6 @@ static QueueNode *_queue_node_create(Item i) {
 
 /* 연결 리스트의 노드에 할당된 메모리를 해제한다. */
 static void _queue_node_release(QueueNode *node) {
-    if (node == NULL) return;
-
     free(node);
 }
 
