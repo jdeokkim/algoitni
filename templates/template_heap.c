@@ -88,6 +88,17 @@ static void _heap_swim(Heap *h, int k) {
 int heap_insert(Heap *h, Item i) {
     if (h == NULL) return 0;
 
+    if (h->length >= h->capacity - 1) {
+        const size_t new_capacity = 2 * h->capacity;
+
+        Item *new_ptr = realloc(h->ptr, new_capacity * sizeof(*new_ptr));
+
+        if (new_ptr == NULL) return 0;
+
+        h->capacity = new_capacity;
+        h->ptr = new_ptr;
+    }
+
     h->ptr[++h->length] = i;
 
     _heap_swim(h, h->length);

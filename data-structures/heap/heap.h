@@ -123,7 +123,7 @@ static void _heap_swim(Heap *h, int k) {
 bool heap_insert(Heap *h, Item i) {
     if (h == NULL) return false;
 
-    if (h->length >= h->capacity) {
+    if (h->length >= h->capacity - 1) {
         const size_t new_capacity = 2 * h->capacity;
 
         Item *new_ptr = realloc(h->ptr, new_capacity * sizeof(*new_ptr));

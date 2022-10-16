@@ -52,7 +52,6 @@ typedef void (*GraphNodeSearchCb)(int v);
 Graph *graph_create(int c);
 void graph_release(Graph *g);
 int graph_add_edge(Graph *g, int v, int w);
-void graph_dfs(Graph *g, int v, GraphNodeSearchCb func);
 void graph_bfs(Graph *g, int v, GraphNodeSearchCb func);
 
 int main(void) {
@@ -203,29 +202,6 @@ int graph_add_edge(Graph *g, int v, int w) {
     g->edge_count++;
 
     return 1;
-}
-
-static void _graph_dfs_helper(Graph *g, int v, GraphNodeSearchCb func) {
-    g->visited[v] = 1;
-
-    if (func != NULL) func(v);
-
-    for (int i = 0; i < g->adjacency[v].length; i++) {
-        int w = g->adjacency[v].ptr[i];
-
-        if (g->visited[w]) continue;
-
-        _graph_dfs_helper(g, w, func);
-    }
-}
-
-void graph_dfs(Graph *g, int v, GraphNodeSearchCb func) {
-    if (g == NULL || v >= g->vertex_count) return;
-
-    for (int i = 0; i < g->vertex_count; i++)
-        g->visited[i] = 0;
-
-    _graph_dfs_helper(g, v, func);
 }
 
 void graph_bfs(Graph *g, int v, GraphNodeSearchCb func) {

@@ -25,23 +25,12 @@
 
 #define GRAPH_ADJACENCY_INIT_CAPACITY 8
 
-typedef struct GQNode {
-    struct GQNode *next;
-    int value;
-} GQNode;
-
-typedef struct GQueue {
-    GQNode *head, *tail;
-    size_t length;
-} GQueue;
-
 typedef struct Graph {
     struct {
         int *ptr;
         size_t length;
         size_t capacity;
     } *adjacency;
-    GQueue *queue;
     int *visited;
     size_t vertex_count;
     size_t edge_count;
@@ -53,81 +42,11 @@ Graph *graph_create(int c);
 void graph_release(Graph *g);
 int graph_add_edge(Graph *g, int v, int w);
 void graph_dfs(Graph *g, int v, GraphNodeSearchCb func);
-void graph_bfs(Graph *g, int v, GraphNodeSearchCb func);
 
 int main(void) {
     /* TODO: ... */
 
     return 0;
-}
-
-static GQNode *gq_node_create(int value) {
-    GQNode *node = malloc(sizeof(*node));
-
-    node->next = NULL;
-    node->value = value;
-
-    return node;
-}
-
-static void gq_node_release(GQNode *node) {
-    free(node);
-}
-
-static GQueue *gq_create(void) {
-    return calloc(1, sizeof(GQueue));
-}
-
-static void gq_release(GQueue *q) {
-    if (q == NULL) return;
-
-    q->length = 0;
-
-    GQNode *node = q->head;
-
-    while (node != NULL) {
-        GQNode *next = node->next;
-
-        gq_node_release(node);
-
-        node = next;
-    }
-
-    free(q);
-}
-
-static int gq_enqueue(GQueue *q, int i) {
-    if (q == NULL) return 0;
-
-    if (q->head == NULL) {
-        q->head = q->tail = gq_node_create(i);
-    } else {
-        GQNode *node = gq_node_create(i);
-
-        q->tail->next = node;
-        q->tail = node;
-    }
-
-    q->length++;
-
-    return 1;
-}
-
-static int gq_dequeue(GQueue *q, int *const i) {
-    if (q == NULL || q->length <= 0 || i == NULL) return 0;
-
-    GQNode *node = q->head->next;
-
-    *i = q->head->value;
-
-    gq_node_release(q->head);
-
-    if (node == NULL) q->head = q->tail = NULL;
-    else q->head = node;
-
-    q->length--;
-
-    return 1;
 }
 
 Graph *graph_create(int c) {
@@ -144,7 +63,6 @@ Graph *graph_create(int c) {
         );
     }
 
-    g->queue = gq_create();
     g->visited = malloc(c * sizeof(*(g->visited)));
 
     g->vertex_count = c;
@@ -158,8 +76,6 @@ void graph_release(Graph *g) {
 
     for (int i = 0; i < g->vertex_count; i++)
         free(g->adjacency[i].ptr);
-
-    gq_release(g->queue);
 
     free(g->visited), free(g->adjacency), free(g);
 }
@@ -226,35 +142,4 @@ void graph_dfs(Graph *g, int v, GraphNodeSearchCb func) {
         g->visited[i] = 0;
 
     _graph_dfs_helper(g, v, func);
-}
-
-void graph_bfs(Graph *g, int v, GraphNodeSearchCb func) {
-    if (g == NULL || v >= g->vertex_count) return;
-
-    for (int i = 0; i < g->vertex_count; i++)
-        g->visited[i] = 0;
-
-    GQueue *q = g->queue;
-
-    gq_enqueue(q, v);
-
-    g->visited[v] = 1;
-
-    int w = v;
-
-    while (q->length > 0) {
-        gq_dequeue(q, &w);
-
-        if (func != NULL) func(w);
-
-        for (int i = 0; i < g->adjacency[w].length; i++) {
-            int u = g->adjacency[w].ptr[i];
-
-            if (g->visited[u]) continue;
-
-            g->visited[u] = 1;
-
-            gq_enqueue(q, u);
-        }
-    }
 }
