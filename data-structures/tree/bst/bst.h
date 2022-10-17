@@ -29,20 +29,17 @@
 
 /* | 매크로 정의... | */
 
-#define BST_STACK_INIT_CAPACITY  16
+#define BST_STACK_INIT_CAPACITY 32
 
 /* | 자료형 선언 및 정의... | */
 
-/* 이진 탐색 트리의 키 값의 자료형. */
-typedef int Key;
-
-/* 이진 탐색 트리의 항목 값의 자료형. */
-typedef int Value;
+/* 이진 탐색 트리의 키와 값의 자료형. */
+typedef int Key, Value;
 
 /* 이진 탐색 트리의 노드를 나타내는 구조체. */
 typedef struct BSTNode {
-    Key key;                // 키 값.
-    Value value;            // 항목 값.
+    Key key;                // 노드의 키.
+    Value value;            // 노드의 값.
     size_t size;            // 노드의 크기.
     struct BSTNode *left;   // 왼쪽 자식 노드.
     struct BSTNode *right;  // 오른쪽 자식 노드.
@@ -51,8 +48,8 @@ typedef struct BSTNode {
 /* 이진 탐색 트리를 나타내는 추상 자료형. */
 typedef struct BST BST;
 
-/* 이진 탐색 트리에 사용되는 비교 함수. */
-typedef int (*BSTNodeCompareCb)(Key k1, Key k2);
+/* 이진 탐색 트리의 연산에 사용되는 비교 함수. */
+typedef int (*BSTNodeCompareCb)(Key k, Key l);
 
 /* 이진 탐색 트리의 각 노드의 탐색 시에 호출되는 함수. */
 typedef void (*BSTNodeSearchCb)(const BSTNode *node);
@@ -71,17 +68,20 @@ bool bst_put(BST *bst, Key k, Value v);
 /* 이진 탐색 트리에서 주어진 키에 대응하는 값을 찾는다. */
 bool bst_get(BST *bst, Key k, Value *const v);
 
-/* 이진 탐색 트리의 노드를 전위 순회 방식으로 탐색한다. */
-void bst_dfs_preorder(BSTNode *node, BSTNodeSearchCb func);
-
-/* 이진 탐색 트리의 노드를 후위 순회 방식으로 탐색한다. */
-void bst_dfs_postorder(BSTNode *node, BSTNodeSearchCb func);
-
-/* 이진 탐색 트리의 노드를 중위 순회 방식으로 탐색한다. */
-void bst_dfs_inorder(BSTNode *node, BSTNodeSearchCb func);
+/* 이진 탐색 트리에서 주어진 키에 대응하는 키-값 쌍을 삭제한다. */
+bool bst_delete(BST *bst, Key k);
 
 /* 이진 탐색 트리의 모든 노드를 삭제한다. */
 void bst_clear(BST *bst);
+
+/* 이진 탐색 트리의 노드를 전위 순회 방식으로 탐색한다. */
+void bst_dfs_preorder(BST *bst, BSTNode *node, BSTNodeSearchCb func);
+
+/* 이진 탐색 트리의 노드를 후위 순회 방식으로 탐색한다. */
+void bst_dfs_postorder(BST *bst, BSTNode *node, BSTNodeSearchCb func);
+
+/* 이진 탐색 트리의 노드를 중위 순회 방식으로 탐색한다. */
+void bst_dfs_inorder(BST *bst, BSTNode *node, BSTNodeSearchCb func);
 
 /* 이진 탐색 트리의 단말 노드의 개수를 반환한다. */
 size_t bst_leaf_count(BSTNode *node);
@@ -101,7 +101,7 @@ BSTNode *bst_root(BST *bst);
 
 /* | 자료형 선언 및 정의... | */
 
-/* 이진 탐색 트리의 스택을 나타내는 구조체. */
+/* 이진 탐색 트리의 순회용 스택을 나타내는 구조체. */
 typedef struct BSTStack {
     BSTNode **ptr;    // 스택에 저장된 항목의 배열.
     size_t length;    // 스택에 저장된 항목의 현재 개수.
@@ -110,13 +110,14 @@ typedef struct BSTStack {
 
 /* 이진 탐색 트리를 나타내는 구조체. */
 struct BST {
-    BSTNode *root;          // 루트 노드.
-    BSTNodeCompareCb func;  // 비교 함수.
+    BSTNode *root;          // 이진 탐색 트리의 루트 노드.
+    BSTStack *stack;        // 이진 탐색 트리의 순회용 스택.
+    BSTNodeCompareCb func;  // 항목의 대소 관계 비교를 위한 함수.
 };
 
 /* | 라이브러리 함수... | */
 
-/* 이진 탐색 트리의 스택을 생성한다. */
+/* 스택을 생성한다. */
 static BSTStack *_bs_create(void) {
     BSTStack *s = malloc(sizeof(*s));
 
@@ -128,7 +129,7 @@ static BSTStack *_bs_create(void) {
     return s;
 }
 
-/* 이진 탐색 트리의 스택에 할당된 메모리를 해제한다. */
+/* 스택에 할당된 메모리를 해제한다. */
 static void _bs_release(BSTStack *s) {
     if (s == NULL) return;
 
@@ -138,8 +139,8 @@ static void _bs_release(BSTStack *s) {
     free(s);
 }
 
-/* 이진 탐색 트리의 스택에 새로운 항목을 추가한다. */
-static bool _bs_push(BSTStack *s, BSTNode *x) {
+/* 스택에 새로운 항목을 추가한다. */
+static bool _bs_push(BSTStack *s, BSTNode *i) {
     if (s == NULL) return false;
 
     if (s->length >= s->capacity) {
@@ -153,14 +154,18 @@ static bool _bs_push(BSTStack *s, BSTNode *x) {
         s->ptr = new_ptr;
     }
 
-    s->ptr[s->length++] = x;
+    s->ptr[s->length++] = i;
 
     return true;
 }
 
-/* 이진 탐색 트리의 스택에서 가장 최근에 추가된 항목을 꺼낸다. */
-static BSTNode *_bs_pop(BSTStack *s) {
-    return (s != NULL && s->length > 0) ? s->ptr[--s->length] : NULL;
+/* 스택에서 가장 최근에 추가된 항목을 꺼낸다. */
+static bool _bs_pop(BSTStack *s, BSTNode **const i) {
+    if (s == NULL || s->length <= 0 || i == NULL) return false;
+
+    *i = s->ptr[--s->length];
+
+    return true;
 }
 
 /* 이진 탐색 트리의 노드를 생성한다. */
@@ -183,19 +188,23 @@ static void _bst_node_release(BSTNode *node) {
 
 /* 이진 탐색 트리를 생성한다. */
 BST *bst_create(BSTNodeCompareCb func) {
-    if (func == NULL) return NULL;
-
     BST *bst = malloc(sizeof(*bst));
 
     bst->root = NULL;
     bst->func = func;
+
+    bst->stack = _bs_create();
 
     return bst;
 }
 
 /* 이진 탐색 트리에 할당된 메모리를 해제한다. */
 void bst_release(BST *bst) {
+    if (bst == NULL) return;
+
     bst_clear(bst);
+
+    _bs_release(bst->stack);
 
     free(bst);
 }
@@ -244,11 +253,11 @@ bool bst_put(BST *bst, Key k, Value v) {
 
         const int direction = bst->func(k, node->key);
 
-        if (direction < 0) {
+        if (direction < 0)
             node = node->left;
-        } else if (direction > 0) {
+        else if (direction > 0)
             node = node->right;
-        } else {
+        else {
             node->value = v;
 
             return true;
@@ -263,8 +272,7 @@ bool bst_put(BST *bst, Key k, Value v) {
 
         const int direction = bst->func(k, node->key);
         
-        if (direction < 0) node = node->left;
-        else node = node->right;
+        node = (direction < 0) ? node->left : node->right;
     }
 
     // 자식 노드의 최종 위치를 결정한다.
@@ -297,11 +305,11 @@ static bool _bst_get_helper(BSTNode *node, BSTNodeCompareCb func, Key k, Value *
     while (node != NULL) {
         const int direction = func(k, node->key);
 
-        if (direction < 0) {
+        if (direction < 0)
             node = node->left;
-        } else if (direction > 0) {
+        else if (direction > 0)
             node = node->right;
-        } else {
+        else {
             *v = node->value;
 
             return true;
@@ -319,62 +327,136 @@ bool bst_get(BST *bst, Key k, Value *const v) {
     return _bst_get_helper(bst->root, bst->func, k, v);
 }
 
+/* (이진 탐색 트리에서 주어진 키에 대응하는 키-값 쌍을 삭제한다.) */
+static BSTNode *_bst_delete_helper(BSTNode *node, BSTNodeCompareCb func, Key k) {
+    if (node == NULL || func == NULL) return false;
+
+    const int direction = func(k, node->key);
+
+    if (direction < 0) 
+        node->left = _bst_delete_helper(node->left, func, k);
+    else if (direction > 0) 
+        node->right = _bst_delete_helper(node->right, func, k);
+    else {
+        if (node->right == NULL) {
+            BSTNode *left = node->left;
+
+            _bst_node_release(node);
+
+            return left;
+        } else if (node->left == NULL) {
+            BSTNode *right = node->right;
+
+            _bst_node_release(node);
+
+            return right;
+        } else {
+            // 삭제할 노드를 미리 저장해놓는다.
+            BSTNode *temp = node, *parent = NULL;
+
+            // 일반적으로, 삭제할 노드의 왼쪽 서브 트리에서 가장 큰 값 또는
+            // 오른쪽 서브 트리에서 가장 작은 값을 후계자 노드로 선택한다.
+            node = temp->right;
+
+            while (node->left != NULL) {
+                parent = node;
+                node = node->left;
+            }
+
+            // 후계자 노드의 부모가 삭제할 노드일 경우...?
+            if (parent == NULL) {
+                node->right = NULL;
+            } else {
+                parent->left = NULL;
+
+                node->right = temp->right;
+                node->right->size--;
+            }
+
+            // 후계자 노드의 왼쪽 부분을 연결한다.
+            node->left = temp->left;
+
+            // 노드를 삭제한다.
+            _bst_node_release(temp);
+        }
+    }
+
+    // 노드의 크기를 미리 계산한다.
+    node->size = 1 + bst_size(node->left) + bst_size(node->right);
+
+    return node;
+}
+
+/* 이진 탐색 트리에서 주어진 키에 대응하는 키-값 쌍을 삭제한다. */
+bool bst_delete(BST *bst, Key k) {
+    if (bst == NULL) return false;
+
+    bst->root = _bst_delete_helper(bst->root, bst->func, k);
+
+    return true;
+}
+
+/* 이진 탐색 트리의 모든 노드를 삭제한다. */
+void bst_clear(BST *bst) {
+    bst_dfs_postorder(bst, bst->root, (BSTNodeSearchCb) _bst_node_release);
+
+    bst->root = NULL;
+}
+
 /* 이진 탐색 트리의 노드를 전위 순회 방식으로 탐색한다. */
-void bst_dfs_preorder(BSTNode *node, BSTNodeSearchCb func) {
+void bst_dfs_preorder(BST *bst, BSTNode *node, BSTNodeSearchCb func) {
     if (node == NULL) return;
     
 #if 0
     {
         if (func != NULL) func(node);
 
-        bst_dfs_preorder(node->left, func);
-        bst_dfs_preorder(node->right, func);
+        bst_dfs_preorder(bst, node->left, func);
+        bst_dfs_preorder(bst, node->right, func);
     }
 #else
-    BSTStack *s = _bs_create();
+    _bs_push(bst->stack, node);
 
-    _bs_push(s, (BSTNode *) node);
+    while (bst->stack->length > 0) {
+        BSTNode *i = NULL;
 
-    while (s->length > 0) {
-        BSTNode *i = _bs_pop(s);
+        _bs_pop(bst->stack, &i);
 
         if (func != NULL) func(i);
          
         // 오른쪽 자식 노드를 먼저 넣어야 스택의 맨 위에 
         // 왼쪽 자식 노드가 위치하게 된다.
-        if (i->right != NULL) _bs_push(s, i->right);
-        if (i->left != NULL) _bs_push(s, i->left);
+        if (i->right != NULL) _bs_push(bst->stack, i->right);
+        if (i->left != NULL) _bs_push(bst->stack, i->left);
     }
 
-    _bs_release(s);
+    bst->stack->length = 0;
 #endif
 }
 
 /* 이진 탐색 트리의 노드를 후위 순회 방식으로 탐색한다. */
-void bst_dfs_postorder(BSTNode *node, BSTNodeSearchCb func) {
-    if (node == NULL) return;
+void bst_dfs_postorder(BST *bst, BSTNode *node, BSTNodeSearchCb func) {
+        if (node == NULL) return;
 
 #if 0
     {
-        bst_dfs_postorder(node->left, func);
-        bst_dfs_postorder(node->right, func);
+        bst_dfs_postorder(bst, node->left, func);
+        bst_dfs_postorder(bst, node->right, func);
 
         if (func != NULL) func(node);
     }
 #else
-    BSTStack *s = _bs_create();
-
     BSTNode *last = NULL;
     
     for (;;) {
         if (node != NULL) {
-            _bs_push(s, node);
+            _bs_push(bst->stack, node);
 
             node = node->left;
         } else {
-            if (s->length <= 0) break;
+            if (bst->stack->length <= 0) break;
 
-            BSTNode *parent = s->ptr[s->length - 1];
+            BSTNode *parent = bst->stack->ptr[bst->stack->length - 1];
 
             // 단말 노드가 아니면서 아직 오른쪽 자식을 확인해보지 않은 경우...?
             if (parent->right != NULL && parent->right != last) {
@@ -382,39 +464,37 @@ void bst_dfs_postorder(BSTNode *node, BSTNodeSearchCb func) {
             } else {
                 if (func != NULL) func(parent);
 
-                last = _bs_pop(s);
+                _bs_pop(bst->stack, &last);
             }
         }
-    };
+    }
 
-    _bs_release(s);
+    bst->stack->length = 0;
 #endif
 }
 
 /* 이진 탐색 트리의 노드를 중위 순회 방식으로 탐색한다. */
-void bst_dfs_inorder(BSTNode *node, BSTNodeSearchCb func) {
+void bst_dfs_inorder(BST *bst, BSTNode *node, BSTNodeSearchCb func) {
 #if 0
     if (node == NULL) return;
 
     {
-        bst_dfs_inorder(node->left, func);
+        bst_dfs_inorder(bst, node->left, func);
 
         if (func != NULL) func(node);
 
-        bst_dfs_inorder(node->right, func);
+        bst_dfs_inorder(bst, node->right, func);
     }
 #else
-    BSTStack *s = _bs_create();
-
     for (;;) {
         if (node != NULL) {
-            _bs_push(s, node);
+            _bs_push(bst->stack, node);
 
             node = node->left;
         } else {
-            if (s->length <= 0) break;
+            if (bst->stack->length <= 0) break;
 
-            node = _bs_pop(s);
+            _bs_pop(bst->stack, &node);
 
             if (func != NULL) func(node);
 
@@ -422,15 +502,8 @@ void bst_dfs_inorder(BSTNode *node, BSTNodeSearchCb func) {
         }
     };
 
-    _bs_release(s);
+    bst->stack->length = 0;
 #endif
-}
-
-/* 이진 탐색 트리의 모든 노드를 삭제한다. */
-void bst_clear(BST *bst) {
-    bst_dfs_postorder(bst->root, (BSTNodeSearchCb) _bst_node_release);
-
-    bst->root = NULL;
 }
 
 /* 이진 탐색 트리의 단말 노드의 개수를 반환한다. */

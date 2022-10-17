@@ -36,15 +36,21 @@ int main(void) {
     bst_put(bst, (Key) 70, (Value) 3);
     bst_put(bst, (Key) 10, (Value) 4);
     bst_put(bst, (Key) 30, (Value) 5);
+    bst_put(bst, (Key) 60, (Value) 6);
+    bst_put(bst, (Key) 80, (Value) 7);
+    bst_put(bst, (Key) 75, (Value) 8);
+    bst_put(bst, (Key) 90, (Value) 9);
 
     Value value;
 
     if (bst_get(bst, (Key) 70, &value))
         printf("%d\n", (int) value);
 
-    bst_dfs_preorder(bst_root(bst), on_bst_node_search); printf("_\n");
-    bst_dfs_postorder(bst_root(bst), on_bst_node_search); printf("_\n");
-    bst_dfs_inorder(bst_root(bst), on_bst_node_search); printf("_\n");
+    bst_delete(bst, (Key) 20);
+
+    bst_dfs_preorder(bst, bst_root(bst), on_bst_node_search); printf("_\n");
+    bst_dfs_postorder(bst, bst_root(bst), on_bst_node_search); printf("_\n");
+    bst_dfs_inorder(bst, bst_root(bst), on_bst_node_search); printf("_\n");
 
     bst_release(bst);
 
@@ -56,5 +62,5 @@ static int on_bst_node_compare(Key k1, Key k2) {
 }
 
 static void on_bst_node_search(const BSTNode *node) {
-    printf("%d (%d) -> ", (int) node->key, (int) node->value);
+    printf("[%d] (%ld) -> ", node->key, node->size);
 }

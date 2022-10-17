@@ -71,9 +71,9 @@ size_t heap_size(Heap *h);
 /* 힙을 나타내는 추상 자료형. */
 struct Heap {
     Item *ptr;           // 힙에 저장된 노드의 배열.
-    HeapCompareCb func;  // 힙의 복구에 사용될 비교 함수.
     size_t length;       // 힙에 저장된 노드의 현재 개수.
     size_t capacity;     // 힙에 저장 가능한 노드의 최대 개수.
+    HeapCompareCb func;  // 항목의 대소 관계 비교를 위한 함수.
 };
 
 /* | 라이브러리 함수... | */
