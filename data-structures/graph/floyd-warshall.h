@@ -20,47 +20,15 @@
     SOFTWARE.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef FLOYD_WARSHALL_H
+#define FLOYD_WARSHALL_H
 
-typedef struct BinaryNode {
-    struct BinaryNode *left, *right;
-    char value;
-} BinaryNode;
+/* TODO: ... */
 
-BinaryNode *binary_node_create(char value);
-void binary_node_release(BinaryNode *node);
-BinaryNode *binary_node_get(BinaryNode *root, char value);
+#endif // `FLOYD_WARSHALL_H`
 
-int main(void) {
-    /* TODO: ... */
+#ifdef FLOYD_WARSHALL_IMPLEMENTATION
 
-    return 0;
-}
+/* TODO: ... */
 
-BinaryNode *binary_node_create(char value) {
-    BinaryNode *node = malloc(sizeof(*node));
-
-    node->left = node->right = NULL;
-    node->value = value;
-
-    return node;
-}
-
-void binary_node_release(BinaryNode *node) {
-    if (node == NULL) return;
-
-    binary_node_release(node->left);
-    binary_node_release(node->right);
-
-    free(node);
-}
-
-BinaryNode *binary_node_get(BinaryNode *root, char value) {
-    if (root == NULL || root->value == value) return root;
-
-    BinaryNode *left = binary_node_get(root->left, value);
-    BinaryNode *right = binary_node_get(root->right, value);
-
-    return (left != NULL) ? left : right;
-}
+#endif // `FLOYD_WARSHALL_IMPLEMENTATION`

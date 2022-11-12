@@ -20,47 +20,17 @@
     SOFTWARE.
 */
 
-#define GRAPH_IMPLEMENTATION
-#include "graph.h"
+#include <iostream>
 
-#define MAX_VERTEX_COUNT 6
+using namespace std;
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/graph.out` */
+int main() {
+#ifdef ONLINE_JUDGE
+    /* https://help.acmicpc.net/language/info */
 
-static void on_graph_node_search(int v);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+#endif
 
-int main(void) {
-    Graph *g = graph_create(MAX_VERTEX_COUNT);
-
-    graph_add_edge(g, 0, 1);
-    graph_add_edge(g, 1, 2);
-    graph_add_edge(g, 0, 3);
-    graph_add_edge(g, 3, 4);
-    graph_add_edge(g, 2, 5);
-
-    int *values = malloc(MAX_VERTEX_COUNT * sizeof(*values));
-    
-    for (int v = 0; v < graph_vertex_count(g); v++) {
-        size_t count = graph_adjacent_vertices(g, v, values);
-
-        printf("%d: ", v);
-
-        for (int i = 0; i < count; i++)
-            printf("%d, ", values[i]);
-
-        printf("_\n");
-    }
-
-    graph_dfs(g, 0, on_graph_node_search); printf("_\n");
-    graph_bfs(g, 0, on_graph_node_search); printf("_\n");
-
-    free(values);
-
-    graph_release(g);
-
-    return 0;
-}
-
-static void on_graph_node_search(int v) {
-    printf("%d -> ", v);
+    /* TODO: ... */
 }

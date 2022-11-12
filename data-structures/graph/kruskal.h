@@ -20,14 +20,15 @@
     SOFTWARE.
 */
 
-#include <iostream>
+#ifndef KRUSKAL_H
+#define KRUSKAL_H
 
-using namespace std;
+/* TODO: ... */
 
-int main() {
-    // 주의: C 입출력 함수 사용 불가능!
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
+#endif // `KRUSKAL_H`
 
-    /* TODO: ... */
-}
+#ifdef KRUSKAL_IMPLEMENTATION
+
+/* TODO: ... */
+
+#endif // `KRUSKAL_IMPLEMENTATION`
