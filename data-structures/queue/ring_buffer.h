@@ -66,9 +66,9 @@ size_t ring_buffer_size(RingBuffer *q);
 
 /* 링 버퍼를 나타내는 구조체. */
 struct RingBuffer {
-    Item *ptr;        // 링 버퍼에 저장된 항목의 배열.
-    size_t capacity;  // 링 버퍼에 저장 가능한 항목의 최대 개수.
-    int start, end;   // 링 버퍼의 첫 번째와 마지막 항목의 인덱스.
+    Item *ptr;        // 항목의 배열.
+    size_t capacity;  // 항목의 최대 개수.
+    int start, end;   // 첫 번째와 마지막 항목의 인덱스.
 };
 
 /* | 라이브러리 함수... | */

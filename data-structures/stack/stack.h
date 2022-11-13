@@ -67,9 +67,9 @@ size_t stack_size(Stack *s);
 
 /* 스택을 나타내는 구조체. */
 struct Stack {
-    Item *ptr;        // 스택에 저장된 항목의 배열.
-    size_t length;    // 스택에 저장된 항목의 현재 개수.
-    size_t capacity;  // 스택에 저장 가능한 항목의 최대 개수.
+    Item *ptr;        // 항목의 배열.
+    size_t length;    // 항목의 현재 개수.
+    size_t capacity;  // 항목의 최대 개수.
 };
 
 /* | 라이브러리 함수... | */
@@ -101,7 +101,7 @@ bool stack_push(Stack *s, Item i) {
     if (s == NULL) return false;
 
     if (s->length >= s->capacity) {
-        const size_t new_capacity = 2 * s->capacity;
+        size_t new_capacity = 2 * s->capacity;
 
         Item *new_ptr = realloc(s->ptr, new_capacity * sizeof(*new_ptr));
 

@@ -69,9 +69,9 @@ typedef struct QueueNode {
 
 /* 큐를 나타내는 구조체. */
 struct Queue {
-    QueueNode *head;  // 큐의 연결 리스트의 첫 번째 노드.
-    QueueNode *tail;  // 큐의 연결 리스트의 마지막 노드.
-    size_t length;    // 큐에 저장된 항목의 현재 개수.
+    QueueNode *head;  // 연결 리스트의 첫 번째 노드.
+    QueueNode *tail;  // 연결 리스트의 마지막 노드.
+    size_t length;    // 항목의 현재 개수.
 };
 
 /* | 라이브러리 함수... | */

@@ -68,12 +68,12 @@ size_t heap_size(Heap *h);
 
 /* | 자료형 선언 및 정의... | */
 
-/* 힙을 나타내는 추상 자료형. */
+/* 힙을 나타내는 구조체. */
 struct Heap {
-    Item *ptr;           // 힙에 저장된 노드의 배열.
-    size_t length;       // 힙에 저장된 노드의 현재 개수.
-    size_t capacity;     // 힙에 저장 가능한 노드의 최대 개수.
-    HeapCompareCb func;  // 항목의 대소 관계 비교를 위한 함수.
+    Item *ptr;           // 노드의 배열.
+    size_t length;       // 노드의 현재 개수.
+    size_t capacity;     // 노드의 최대 개수.
+    HeapCompareCb func;  // 비교 함수.
 };
 
 /* | 라이브러리 함수... | */
@@ -124,7 +124,7 @@ bool heap_insert(Heap *h, Item i) {
     if (h == NULL) return false;
 
     if (h->length >= h->capacity - 1) {
-        const size_t new_capacity = 2 * h->capacity;
+        size_t new_capacity = 2 * h->capacity;
 
         Item *new_ptr = realloc(h->ptr, new_capacity * sizeof(*new_ptr));
 

@@ -26,7 +26,23 @@
 /* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/kruskal.out` */
 
 int main(void) {
-    /* TODO: ... */
+    EdgeGraph *eg = eg_create();
+
+    eg_add_edge(eg, (Edge) { 1, 2, 1 });
+    eg_add_edge(eg, (Edge) { 2, 3, 2 });
+    eg_add_edge(eg, (Edge) { 1, 3, 3 });
+
+    EdgeGraph *mst = eg_kruskal(eg, 3);
+
+    for (int i = 0; i < mst->length; i++)
+        printf(
+            "%d-%d: %d\n", 
+            mst->edges[i].v, 
+            mst->edges[i].w, 
+            mst->edges[i].weight
+        );
+
+    eg_release(mst), eg_release(eg);
     
     return 0;
 }

@@ -26,7 +26,18 @@
 /* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/dijkstra.out` */
 
 int main(void) {
-    /* TODO: ... */
-    
+    Graph *g = graph_create(6);
+
+    graph_add_edge(g, 1, 2, 5);
+    graph_add_edge(g, 1, 4, 9);
+    graph_add_edge(g, 1, 5, 1);
+    graph_add_edge(g, 2, 3, 2);
+    graph_add_edge(g, 4, 3, 6);
+    graph_add_edge(g, 5, 4, 2);
+
+    graph_dijkstra(g, 1);
+
+    graph_release(g);
+
     return 0;
 }

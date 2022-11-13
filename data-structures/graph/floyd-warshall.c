@@ -26,7 +26,30 @@
 /* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/floyd-warshall.out` */
 
 int main(void) {
-    /* TODO: ... */
+    MatGraph *mg = mg_create(5);
+
+    mg_add_edge(mg, 1, 2, 2);
+    mg_add_edge(mg, 1, 3, 3);
+    mg_add_edge(mg, 1, 4, 1);
+    mg_add_edge(mg, 1, 5, 10);
+    mg_add_edge(mg, 2, 4, 2);
+    mg_add_edge(mg, 3, 1, 8);
+    mg_add_edge(mg, 3, 4, 1);
+    mg_add_edge(mg, 3, 5, 1);
+    mg_add_edge(mg, 4, 5, 3);
+    mg_add_edge(mg, 5, 1, 7);
+    mg_add_edge(mg, 5, 2, 4);
+
+    mg_floyd_warshall(mg);
+
+    for (int i = 1; i <= mg->size; i++) {
+        for (int j = 1; j <= mg->size; j++)
+            printf("%3d ", mg->distance[i][j]);
+
+        printf("\n");
+    }
+
+    mg_release(mg);
     
     return 0;
 }

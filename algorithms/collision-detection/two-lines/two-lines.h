@@ -80,8 +80,11 @@ bool intersects(Vec2 p0, Vec2 p1, Vec2 q0, Vec2 q1, Vec2 *const v) {
                 if (v != NULL) {
                     if ((p0.x == q0.x && p0.y == q0.y) 
                         || (p0.x == q1.x && p0.y == q1.y)) *v = p0;
+                    /*
                     else if ((p1.x == q0.x && p1.y == q0.y) 
                         || (p1.x == q1.x && p1.y == q1.y)) *v = p1;
+                    */
+                    else *v = p1;
                 }
 
                 return 1;
