@@ -113,7 +113,7 @@ static void _heap_swim(Heap *h, int k) {
     if (h == NULL) return;
 
     // 힙-정렬 조건을 만족할 때까지 자식 노드를 위로 보낸다.
-    while (k > 1 && h->ptr[k >> 1].weight < h->ptr[k].weight) {
+    while (k > 1 && h->ptr[k >> 1].weight > h->ptr[k].weight) {
         VertexData t = h->ptr[k >> 1];
 
         h->ptr[k >> 1] = h->ptr[k];
@@ -152,8 +152,8 @@ static void _heap_sink(Heap *h, int k) {
     while ((k << 1) <= h->length) {
         int j = k << 1;
 
-        if (j < h->length && h->ptr[j].weight < h->ptr[j + 1].weight) j++;
-        if (h->ptr[k].weight >= h->ptr[j].weight) break;
+        if (j < h->length && h->ptr[j].weight > h->ptr[j + 1].weight) j++;
+        if (h->ptr[k].weight <= h->ptr[j].weight) break;
 
         VertexData t = h->ptr[k];
 
@@ -245,6 +245,8 @@ void graph_add_edge(Graph *g, int v, int w, int weight) {
     g->adjacency[v].ptr[g->adjacency[v].length].weight = weight;
 
     g->adjacency[v].length++;
+
+    g->edge_count++;
 }
 
 /* 다익스트라 알고리즘을 이용하여, 다른 정점까지의 최단 경로를 계산한다. */
@@ -252,8 +254,10 @@ void graph_dijkstra(Graph *g, int v) {
     if (g == NULL) return;
 
     // 1단계: 최단 경로 가중치 배열을 초기화한다.
-    for (int i = 0; i < g->vertex_count; i++)
+    for (int i = 0; i < g->vertex_count; i++) {
         g->distance[i] = INT_MAX;
+        g->processed[i] = 0;
+    }
 
     // 2단계: 시작 정점의 가중치를 0으로 변경한다.
     g->distance[v] = 0;
@@ -271,15 +275,15 @@ void graph_dijkstra(Graph *g, int v) {
         g->processed[top.other] = 1;
 
         for (int i = 0; i < g->adjacency[top.other].length; i++) {
-            int w = g->adjacency[top.other].ptr[i].other;
-            int weight = g->adjacency[top.other].ptr[i].weight;
+            int u = g->adjacency[top.other].ptr[i].other;
+            int w = g->adjacency[top.other].ptr[i].weight;
 
             if (g->distance[top.other] == INT_MAX) continue;
 
-            if (g->distance[w] > g->distance[top.other] + weight) {
-                g->distance[w] = g->distance[top.other] + weight;
+            if (g->distance[u] > g->distance[top.other] + w) {
+                g->distance[u] = g->distance[top.other] + w;
 
-                _heap_insert(g->heap, (VertexData) { w, g->distance[w] });
+                _heap_insert(g->heap, (VertexData) { u, g->distance[u] });
             }
         }
     }

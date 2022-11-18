@@ -182,7 +182,7 @@ static int _compare_edges(const void *a, const void *b) {
 /* 크루스칼 알고리즘을 이용하여, 최소 신장 트리를 구한다. */
 EdgeGraph *eg_kruskal(EdgeGraph *eg, int n) {
     EdgeGraph *mst = eg_create();
-
+    
     UnionFind *uf = _uf_create(n);
 
     // 1단계: 그래프의 간선을 가중치 오름차순으로 정렬한다.

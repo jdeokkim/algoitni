@@ -232,6 +232,8 @@ void maze_dfs(Maze *m, Point p) {
 void maze_bfs(Maze *m, Point p) {
     if (m == NULL) return;
 
+    maze_reset(m);
+
     m->visited[p.y][p.x] = 1;
 
     _queue_clear(m->queue), _queue_enqueue(m->queue, p);
