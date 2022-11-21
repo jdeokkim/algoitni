@@ -34,11 +34,8 @@ PROJECT_PREFIX := $(_COLOR_BEGIN)$(PROJECT_FULL_NAME):$(_COLOR_END)
 BINARY_PATH := bin
 SOURCE_PATH := .
 
-EXAMPLES :=    \
-	union-find
-
-SOURCES := $(EXAMPLES:%=$(SOURCE_PATH)/%.c)
-TARGETS := $(EXAMPLES:%=$(BINARY_PATH)/%.out)
+SOURCES := $(wildcard $(SOURCE_PATH)/*.c)
+TARGETS := $(patsubst $(SOURCE_PATH)/%.c,$(BINARY_PATH)/%.out,$(SOURCES))
 
 HOST_PLATFORM := LINUX
 

@@ -25,8 +25,6 @@
 _COLOR_BEGIN := $(shell tput setaf 16)
 _COLOR_END := $(shell tput sgr0)
 
-RAYLIB_PATH ?= ../../../raylib
-
 PROJECT_NAME := algoitni
 PROJECT_FULL_NAME := jdeokkim/algoitni
 
@@ -34,15 +32,10 @@ PROJECT_PATH := ../$(PROJECT_NAME)
 PROJECT_PREFIX := $(_COLOR_BEGIN)$(PROJECT_FULL_NAME):$(_COLOR_END)
 
 BINARY_PATH := bin
-INCLUDE_PATH := $(RAYLIB_PATH)/src
-LIBRARY_PATH := $(RAYLIB_PATH)/src
 SOURCE_PATH := .
 
-EXAMPLES := \
-	convex-hull
-
-SOURCES := $(EXAMPLES:%=$(SOURCE_PATH)/%.c)
-TARGETS := $(EXAMPLES:%=$(BINARY_PATH)/%.out)
+SOURCES := $(wildcard $(SOURCE_PATH)/*.c)
+TARGETS := $(patsubst $(SOURCE_PATH)/%.cpp,$(BINARY_PATH)/%.out,$(SOURCES))
 
 HOST_PLATFORM := LINUX
 
@@ -59,7 +52,6 @@ endif
 
 CC := gcc
 CFLAGS := -D_DEFAULT_SOURCE -g $(INCLUDE_PATH:%=-I%) -O2 -std=c99
-LDLIBS := -lraylib -ldl -lGL -lm -lpthread -lrt -lX11
 
 PLATFORM := $(HOST_PLATFORM)
 
@@ -69,9 +61,6 @@ ifeq ($(PLATFORM),WINDOWS)
 	ifneq ($(HOST_PLATFORM),WINDOWS)
 		CC := x86_64-w64-mingw32-gcc
 	endif
-	
-	LDFLAGS := $(LIBRARY_PATH:%=-L%)
-	LDLIBS := -lraylib -lopengl32 -lgdi32 -lwinmm -lpthread
 endif
 
 all: pre-build build post-build
