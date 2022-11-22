@@ -26,7 +26,7 @@
 /* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/ring_buffer.out` */
 
 int main(void) {
-    RingBuffer *q = ring_buffer_create(8);
+    RingBuffer *q = ring_buffer_create(3);
 
     ring_buffer_enqueue(q, (Item) 10);
     ring_buffer_enqueue(q, (Item) 20);

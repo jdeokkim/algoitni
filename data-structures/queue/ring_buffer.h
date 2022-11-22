@@ -101,8 +101,8 @@ void ring_buffer_release(RingBuffer *q) {
 bool ring_buffer_enqueue(RingBuffer *q, Item i) {
     if (q == NULL || ring_buffer_is_full(q)) return false;
 
-    q->end = (q->end + 1) % q->capacity;
     q->ptr[q->end] = i;
+    q->end = (q->end + 1) % q->capacity;
 
     return true;
 }
@@ -111,8 +111,8 @@ bool ring_buffer_enqueue(RingBuffer *q, Item i) {
 bool ring_buffer_dequeue(RingBuffer *q, Item *const i) {
     if (ring_buffer_is_empty(q) || i == NULL) return false;
 
-    q->start = (q->start + 1) % q->capacity;
     *i = q->ptr[q->start];
+    q->start = (q->start + 1) % q->capacity;
 
     return true;
 }
