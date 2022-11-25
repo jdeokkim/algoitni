@@ -120,9 +120,16 @@ void uf_unite(UnionFind *uf, int p, int q) {
 int uf_find(UnionFind *uf, int p) {
     if (uf == NULL) return -1;
 
-    while (p != uf->id[p]) p = uf->id[p];
+    /*
+        while (p != uf->id[p]) p = uf->id[p];
 
-    return p;
+        return p;
+    */
+
+    if (p == uf->id[p]) return p;
+
+    // weighted quick-union with path compression
+    return uf->id[p] = uf_find(uf, uf->id[p]);
 }
 
 #endif // `UNION_FIND_IMPLEMENTATION`
