@@ -199,7 +199,7 @@ EdgeGraph *eg_kruskal(EdgeGraph *eg, int n) {
         _uf_unite(uf, v, w);
 
         // 4단계: 간선을 결과 그래프에 추가한다.
-        eg_add_edge(mst, (Edge) { v, w, eg->edges[i].weight });
+        eg_add_edge(mst, eg->edges[i]);
     }
 
     _uf_release(uf);
