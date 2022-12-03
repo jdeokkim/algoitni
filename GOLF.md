@@ -2,7 +2,7 @@
 
 아래 내용은 [C99 표준](https://en.cppreference.com/w/c/99) 및 [GCC v9.4.0](https://gcc.gnu.org/) 컴파일러를 기준으로 작성되었습니다.
 
-* [`main() 함수`](#main-함수)
+* [`main()` 함수](#main-함수)
 * [표준 입출력](#표준-입출력)
 * [표현식과 연산자](#표현식과-연산자)
 * [반복문과 배열](#반복문과-배열)
@@ -57,11 +57,16 @@ i;main(){
 
 <br />
 
-- 코드에 반복되는 키워드 등이 존재한다면, 상황에 따라 `#define`을 이용하여 코드 길이를 줄일 수 있다.
+- 코드에 반복되는 키워드 등이 존재한다면, 상황에 따라 `#define`을 이용하여 코드 길이를 줄일 수 있다. 특히, 매크로 이름 뒤에 문자열 리터럴 (string literal)이 올 경우에는 공백 문자를 생략 가능하다.
 
 ```c
 #define D double
 #define R return
+
+/*
+#define S "hello"
+*/
+#define S"hello"
 
 #define L(x,y) for((x)=0;(x)<(y);(x)++)
 ```
@@ -70,7 +75,7 @@ i;main(){
 
 ## 표준 입출력
 
-- **입력받아야 하는 값이 숫자 또는 문자 1글자**일 때는 `scanf()` 대신 [`getchar()`](https://en.cppreference.com/w/c/io/getchar)를 사용할 수 있다.
+- **입력받아야 하는 값이 문자 1글자**일 때는 `scanf()` 대신 [`getchar()`](https://en.cppreference.com/w/c/io/getchar)를 사용할 수 있다.
 
 ```c
 main(c){
@@ -86,13 +91,37 @@ main(c){
 
 ```c
 main(c){
-    scanf(" %c", &c);
+    scanf(" %c",&c);
 }
 ```
 
 <br />
 
-- **형식 문자열이 없는 단순 문자열을 출력**할 때는 `printf()` 대신 [`puts()`](https://en.cppreference.com/w/c/io/puts)를 사용할 수 있다.
+- **`gets()` 함수는 [C 프로그래밍을 할 때 절대로 사용해서는 안되는 위험한 함수 중 하나지만](https://stackoverflow.com/questions/1694036/why-is-the-gets-function-so-dangerous-that-it-should-not-be-used)**, 숏코딩을 할 때만큼은 유용하게 사용할 수 있다.
+
+```c
+S[21];main(){
+//  scanf("%s",S);
+    gets(S);
+
+    puts(S);
+}
+```
+
+<br />
+
+- 문자를 출력할 때는 문자 리터럴 (character literal) 대신 그 문자에 대응하는 ASCII 코드를 사용할 수 있다.
+
+```c
+main(){
+//  putchar('A');
+    putchar(65);
+}
+```
+
+<br />
+
+- **형식 문자열이 없는 단순 문자열을 출력**할 때는 `printf()` 대신 [`puts()`](https://en.cppreference.com/w/c/io/puts)를 사용할 수 있는데, `puts()` 함수는 마지막에 개행 문자를 출력한다는 점에 유의하도록 한다.
 
 ```c
 main(){
@@ -137,6 +166,17 @@ main(a,b){
 
 <br />
 
+- `!` 연산자를 이용하면 특정 값이 0인지 여부를 간결하게 판단할 수 있다.
+
+```c
+main(a){
+//  a==0?0:puts("RUN");
+    !a?0:puts("RUN");
+}
+```
+
+<br />
+
 - 두 값이 서로 다른 값인지 확인할 때는 `!=` 연산자 대신 `^` 또는 `-` 연산자를 사용할 수 있다.
 
 ```c
@@ -148,12 +188,28 @@ main(a,b){
 
 <br />
 
-- `!` 연산자를 이용하면 특정 값이 0인지 여부를 간결하게 판단할 수 있다.
+- `(x > 0) && (y > 0)`일 경우, `(x >= y) = (x / y)`가 성립한다.
 
 ```c
-main(a){
-//  a==0?0:puts("RUN");
-    !a?0:puts("RUN");
+main(a,b){
+    a=2,b=1;
+
+//  puts(a>=b?"true":"false");
+    puts(a/b?"true":"false");
+}
+```
+
+<br />
+
+- **논리 연산자 `&&`와 `||`의 왼쪽 표현식과 오른쪽 표현식 중 하나라도 논리 표현식 (boolean expression)일 경우**, `&&`와 `||`를 각각 `&`과 `|`로 대체할 수 있다. 단, 이 방법은 각 표현식에 포함된 [연산자의 우선순위](https://en.cppreference.com/w/c/language/operator_precedence)에 따라 올바르게 동작하지 않을 수도 있다.
+
+```c
+main(a,b){
+    a=4,b=-1;
+
+//  puts(a==4&&b!=0?"true":"false");
+//  puts(a==4&&b?"true":"false");
+    puts(a==4&b?"true":"false");
 }
 ```
 
@@ -226,6 +282,18 @@ main(){printf("%f\n",(double[]){.5,.65,.8}[1]);}
 
 ## 문자와 문자열
 
+- 문자열을 입력받을 때는 `char` 배열 대신 `int` 배열에 문자열을 저장할 수도 있다.
+
+```c
+main(n){char s[100];scanf("%d",&n);for(;n--;)scanf("%s",s),puts(s);}
+```
+
+```c
+s[100];main(n){scanf("%d",&n);for(;n--;)scanf("%s",s),puts(s);}
+```
+
+<br />
+
 - 문자열의 끝을 확인할 때는 `strlen()` 함수를 사용하는 대신, 각 문자가 널 문자인지를 검사하는 것이 좋다.
 
 ```c
@@ -240,6 +308,9 @@ i;main(){char*s="RUN";
 
 ## 참고 자료
 
+- https://blog.merovius.de/posts/2013-10-11-how-to-cgolf/
 - https://codegolf.stackexchange.com/questions/2203/tips-for-golfing-in-c
 - https://en.cppreference.com/w/c/language/function_definition
 - https://en.cppreference.com/w/c/language/main_function
+- https://en.cppreference.com/w/c/language/operator_precedence
+- http://graphics.stanford.edu/~seander/bithacks.html
