@@ -37,9 +37,9 @@ int main(void) {
     for (int i = 0; i < mst->length; i++)
         printf(
             "%d-%d: %d\n", 
+            mst->edges[i].u, 
             mst->edges[i].v, 
-            mst->edges[i].w, 
-            mst->edges[i].weight
+            mst->edges[i].w
         );
 
     eg_release(mst), eg_release(eg);

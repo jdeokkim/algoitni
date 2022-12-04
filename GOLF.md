@@ -85,6 +85,15 @@ main(c){
 }
 ```
 
+```c
+main(c){
+//  for(;scanf("%c",&c),c!='\n';)printf("%c\n",c);
+//  for(;scanf("%c",&c),c!=10;)printf("%c\n",c);
+//  for(;scanf("%c",&c),c^10;)printf("%c\n",c);
+    for(;c=getchar()-10;)printf("%c\n",c+10);
+}
+```
+
 <br />
 
 - 여러 개의 문자를 하나씩 입력받을 때는 `" %c"`를 이용하여 모든 공백 문자를 무시할 수 있다.

@@ -20,38 +20,25 @@
     SOFTWARE.
 */
 
-#define MAZE_IMPLEMENTATION
-#include "maze.h"
+#define TOPO_SORT_IMPLEMENTATION
+#include "topo-sort.h"
 
-#define MAZE_WIDTH   6
-#define MAZE_HEIGHT  4
-
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/maze.out` */
-
-static const int INPUT[MAZE_HEIGHT][MAZE_WIDTH] = {
-    { 1, 0, 1, 1, 1, 1 },
-    { 1, 0, 1, 0, 1, 0 },
-    { 1, 0, 1, 0, 1, 1 },
-    { 1, 1, 1, 0, 1, 1 }
-};  
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/topo-sort.out` */
 
 int main(void) {
-    Maze *m = maze_create(MAZE_WIDTH, MAZE_HEIGHT);
+    Graph *g = graph_create(7);
 
-    for (int y = 0; y < MAZE_HEIGHT; y++)
-        for (int x = 0; x < MAZE_WIDTH; x++)
-            maze_set_cell(m, (Point) { x, y }, INPUT[y][x]);
+    graph_add_edge(g, 1, 2, 0);
+    graph_add_edge(g, 2, 3, 0);
+    graph_add_edge(g, 3, 6, 0);
+    graph_add_edge(g, 4, 1, 0);
+    graph_add_edge(g, 4, 5, 0);
+    graph_add_edge(g, 5, 2, 0);
+    graph_add_edge(g, 5, 3, 0);
 
-    maze_bfs(m, (Point) { 0, 0 });
+    graph_topo_sort(g);
 
-    for (int y = 0; y < MAZE_HEIGHT; y++) {
-        for (int x = 0; x < MAZE_WIDTH; x++)
-            printf("%3d ", maze_get_visited(m, (Point) { x, y }));
+    graph_release(g);
 
-        puts("");
-    }
-
-    maze_release(m);
-    
     return 0;
 }

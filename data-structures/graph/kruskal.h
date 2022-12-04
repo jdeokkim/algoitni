@@ -34,8 +34,7 @@
 
 /* 가중 그래프의 간선을 나타내는 구조체. */
 typedef struct Edge {
-    int v, w;    // 간선의 두 정점.
-    int weight;  // 간선의 가중치.
+    int u, v, w;  // 간선의 두 정점 및 가중치.
 } Edge;
 
 /* 간선 리스트로 표현된 그래프를 나타내는 추상 자료형. */
@@ -176,7 +175,7 @@ static int _compare_edges(const void *a, const void *b) {
     const Edge e1 = *(const Edge *) a;
     const Edge e2 = *(const Edge *) b;
 
-    return (e1.weight > e2.weight) - (e1.weight < e2.weight);
+    return (e1.w > e2.w) - (e1.w < e2.w);
 }
 
 /* 크루스칼 알고리즘을 이용하여, 최소 신장 트리를 구한다. */
@@ -190,13 +189,13 @@ EdgeGraph *eg_kruskal(EdgeGraph *eg, int n) {
 
     // 2단계: 그래프의 모든 간선을 하나씩 살펴보고, 간선을 하나씩 선택한다.
     for (int i = 0; i < eg->length; i++) {
+        int u = eg->edges[i].u;
         int v = eg->edges[i].v;
-        int w = eg->edges[i].w;
 
         // 3단계: 사이클이 존재하는지 확인한다.
-        if (_uf_connected(uf, v, w)) continue;
+        if (_uf_connected(uf, u, v)) continue;
 
-        _uf_unite(uf, v, w);
+        _uf_unite(uf, u, v);
 
         // 4단계: 간선을 결과 그래프에 추가한다.
         eg_add_edge(mst, eg->edges[i]);

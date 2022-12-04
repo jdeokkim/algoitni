@@ -54,7 +54,7 @@ int maze_get_cell(Maze *m, Point p);
 int maze_get_visited(Maze *m, Point p);
 
 /* 미로 그래프의 주어진 칸의 값을 변경한다. */
-void maze_set_cell(Maze *m, Point p, int value);
+void maze_set_cell(Maze *m, Point p, int w);
 
 /* 미로 그래프를 깊이 우선 탐색한다. */
 void maze_dfs(Maze *m, Point p);
@@ -197,10 +197,10 @@ int maze_get_visited(Maze *m, Point p) {
 }
 
 /* 미로 그래프의 주어진 칸의 값을 변경한다. */
-void maze_set_cell(Maze *m, Point p, int value) {
+void maze_set_cell(Maze *m, Point p, int w) {
     if (m == NULL) return;
 
-    m->cells[p.y][p.x] = value;
+    m->cells[p.y][p.x] = w;
 }
 
 /* (미로 그래프를 깊이 우선 탐색한다.) */

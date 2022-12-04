@@ -41,7 +41,7 @@ MatGraph *mg_create(int n);
 void mg_release(MatGraph *mg);
 
 /* 그래프에 새로운 간선을 추가한다. */
-void mg_add_edge(MatGraph *mg, int v, int w, int weight);
+void mg_add_edge(MatGraph *mg, int u, int v, int w);
 
 /* 플로이드-워셜 알고리즘을 이용하여, 최단 경로 행렬을 업데이트한다. */
 void mg_floyd_warshall(MatGraph *mg);
@@ -86,10 +86,10 @@ void mg_release(MatGraph *mg) {
 }
 
 /* 그래프에 새로운 간선을 추가한다. */
-void mg_add_edge(MatGraph *mg, int v, int w, int weight) {
+void mg_add_edge(MatGraph *mg, int u, int v, int w) {
     if (mg == NULL) return;
 
-    mg->adjacency[v][w] = weight;
+    mg->adjacency[u][v] = w;
 }
 
 /* 플로이드-워셜 알고리즘을 이용하여, 최단 경로 행렬을 업데이트한다. */
