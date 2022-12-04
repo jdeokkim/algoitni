@@ -106,6 +106,17 @@ main(c){
 
 <br />
 
+- **[`%n` 형식 지정자](https://en.cppreference.com/w/c/io/fscanf)를 이용하면, `strlen()` 함수 없이도 문자열의 길이를 구할 수 있다.**
+
+```c
+char S[100];main(c){
+//  scanf(" %s",S);c=strlen(S);
+    scanf(" %s%n",S,&c);
+}
+```
+
+<br />
+
 - **`gets()` 함수는 [C 프로그래밍을 할 때 절대로 사용해서는 안되는 위험한 함수 중 하나지만](https://stackoverflow.com/questions/1694036/why-is-the-gets-function-so-dangerous-that-it-should-not-be-used)**, 숏코딩을 할 때만큼은 유용하게 사용할 수 있다.
 
 ```c
