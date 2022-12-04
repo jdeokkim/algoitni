@@ -35,7 +35,7 @@ typedef struct MatGraph MatGraph;
 /* | 라이브러리 함수... | */
 
 /* 그래프를 생성한다. */
-MatGraph *mg_create(int n);
+MatGraph *mg_create(int V);
 
 /* 그래프에 할당된 메모리를 해제한다. */
 void mg_release(MatGraph *mg);
@@ -56,24 +56,24 @@ void mg_floyd_warshall(MatGraph *mg);
 struct MatGraph {
     int **adjacency; // 인접 행렬.
     int **distance;  // 최단 경로의 가중치.
-    int size;        // 정점의 개수.
+    int V;           // 정점의 개수.
 };
 
 /* | 라이브러리 함수... | */
 
 /* 그래프를 생성한다. */
-MatGraph *mg_create(int n) {
+MatGraph *mg_create(int V) {
     MatGraph *mg = malloc(sizeof(*mg));
 
-    mg->adjacency = malloc((n + 1) * sizeof(*(mg->adjacency)));
-    mg->distance = malloc((n + 1) * sizeof(*(mg->distance)));
+    mg->adjacency = malloc((V + 1) * sizeof(*(mg->adjacency)));
+    mg->distance = malloc((V + 1) * sizeof(*(mg->distance)));
 
-    for (int i = 0; i <= n; i++) {
-        mg->adjacency[i] = calloc(n + 1, sizeof(*(mg->adjacency[i])));
-        mg->distance[i] = calloc(n + 1, sizeof(*(mg->distance[i])));
+    for (int i = 0; i <= V; i++) {
+        mg->adjacency[i] = calloc(V + 1, sizeof(*(mg->adjacency[i])));
+        mg->distance[i] = calloc(V + 1, sizeof(*(mg->distance[i])));
     }
 
-    mg->size = n;
+    mg->V = V;
 
     return mg;
 }
@@ -96,17 +96,17 @@ void mg_add_edge(MatGraph *mg, int u, int v, int w) {
 void mg_floyd_warshall(MatGraph *mg) {
     if (mg == NULL) return;
 
-    for (int i = 1; i <= mg->size; i++) {
-        for (int j = 1; j <= mg->size; j++) {
+    for (int i = 1; i <= mg->V; i++) {
+        for (int j = 1; j <= mg->V; j++) {
             if (i == j) mg->distance[i][j] = 0;
             else if (mg->adjacency[i][j]) mg->distance[i][j] = mg->adjacency[i][j];
             else mg->distance[i][j] = INT_MAX;
         }
     }
 
-    for (int k = 1; k <= mg->size; k++)
-        for (int i = 1; i <= mg->size; i++)
-            for (int j = 1; j <= mg->size; j++) {
+    for (int k = 1; k <= mg->V; k++)
+        for (int i = 1; i <= mg->V; i++)
+            for (int j = 1; j <= mg->V; j++) {
                 if (mg->distance[i][k] == INT_MAX || mg->distance[k][j] == INT_MAX) 
                     continue;
                 

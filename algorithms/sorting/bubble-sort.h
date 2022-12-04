@@ -20,11 +20,45 @@
     SOFTWARE.
 */
 
+#ifndef BUBBLE_SORT_H
+#define BUBBLE_SORT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(void) {
-    /* TODO: ... */
+/* | 자료형 선언 및 정의... | */
 
-    return 0;
+/* 정렬할 원소의 자료형. */
+typedef int T;
+
+/* | 라이브러리 함수... | */
+
+/* 주어진 배열을 버블 정렬한다. */
+void bubble_sort(T *values, size_t n);
+
+#endif // `BUBBLE_SORT_H`
+
+#ifdef BUBBLE_SORT_IMPLEMENTATION
+
+/* | 라이브러리 함수... | */
+
+/* 주어진 배열을 버블 정렬한다. */
+void bubble_sort(T *values, size_t n) {
+    if (values == NULL || n <= 1) return;
+
+    /*
+        버블 정렬은 무조건 인접한 2개의 원소만을 비교하는
+        "무식한" 정렬 방법이다.
+    */
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n - 1; j++)
+            if (values[j] > values[j + 1]) {
+                T value = values[j];
+
+                values[j] = values[j + 1];
+                values[j + 1] = value;
+            }
 }
+
+#endif // `BUBBLE_SORT_IMPLEMENTATION`

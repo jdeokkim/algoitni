@@ -75,12 +75,11 @@ struct Graph {
         Edge *ptr;
         size_t length;
         size_t capacity;
-    } *adjacency;            // 인접 리스트.
-    Heap *heap;              // 우선 순위 큐.
-    int *distance;           // 최단 경로의 가중치.
-    int *processed;          // 최단 경로 계산 여부.
-    int vertex_count;        // 정점의 개수.
-    int edge_count;          // 간선의 개수.
+    } *adjacency;         // 인접 리스트.
+    Heap *heap;           // 우선 순위 큐.
+    int *distance;        // 최단 경로의 가중치.
+    int *processed;       // 최단 경로 계산 여부.
+    int V, E;             // 정점 및 간선의 개수.
 };
 
 /* | 라이브러리 함수... | */
@@ -204,7 +203,7 @@ Graph *graph_create(int V) {
     g->distance = malloc(V * sizeof(*(g->distance)));
     g->processed = calloc(V, sizeof(*(g->processed)));
 
-    g->vertex_count = V, g->edge_count = 0;
+    g->V = V, g->E = 0;
 
     return g;
 }
@@ -213,7 +212,7 @@ Graph *graph_create(int V) {
 void graph_release(Graph *g) {
     if (g == NULL) return;
 
-    for (int i = 0; i < g->vertex_count; i++)
+    for (int i = 0; i < g->V; i++)
         free(g->adjacency[i].ptr);
 
     _heap_release(g->heap);
@@ -244,7 +243,7 @@ void graph_add_edge(Graph *g, int u, int v, int w) {
 
     g->adjacency[u].length++;
 
-    g->edge_count++;
+    g->E++;
 }
 
 /* 다익스트라 알고리즘을 이용하여, 다른 정점까지의 최단 경로를 계산한다. */
@@ -252,7 +251,7 @@ void graph_dijkstra(Graph *g, int u) {
     if (g == NULL) return;
 
     // 1단계: 최단 경로 가중치 배열을 초기화한다.
-    for (int i = 0; i < g->vertex_count; i++) {
+    for (int i = 0; i < g->V; i++) {
         g->distance[i] = INT_MAX;
         g->processed[i] = 0;
     }
@@ -286,7 +285,7 @@ void graph_dijkstra(Graph *g, int u) {
         }
     }
 
-    for (int i = 1; i < g->vertex_count; i++)
+    for (int i = 1; i < g->V; i++)
         printf("%d\n", g->distance[i]);
 }
 

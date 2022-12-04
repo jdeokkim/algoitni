@@ -20,12 +20,12 @@
     SOFTWARE.
 */
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/convex-hull.out` */
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/jarvis-march.out` */
 
 #include "raylib.h"
 
-#define CONVEX_HULL_IMPLEMENTATION
-#include "convex-hull.h"
+#define JARVIS_MARCH_IMPLEMENTATION
+#include "jarvis-march.h"
 
 #define TARGET_FPS       60
 
@@ -39,7 +39,7 @@ static int hull_point_count = 0;
 static void generate_points(Vector2 *points, Vector2 *hull, size_t n);
 
 int main(void) {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "jdeokkim/algoitni | convex-hull.c");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "jdeokkim/algoitni | jarvis-march.c");
 
     SetTargetFPS(TARGET_FPS);
 

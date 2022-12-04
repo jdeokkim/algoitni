@@ -20,11 +20,22 @@
     SOFTWARE.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#define SELECTION_SORT_IMPLEMENTATION
+#include "selection-sort.h"
+
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/selection-sort.out` */
 
 int main(void) {
-    /* TODO: ... */
+    T values[] = { 50, 40, 20, 30, 10 };
+
+    size_t length = sizeof(values) / sizeof(*values);
+
+    selection_sort(values, length);
+
+    for (int i = 0; i < length - 1; i++)
+        printf("%d, ", values[i]);
+
+    printf("%d\n", values[length - 1]);
 
     return 0;
 }

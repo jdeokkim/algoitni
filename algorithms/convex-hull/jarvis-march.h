@@ -20,8 +20,8 @@
     SOFTWARE.
 */
 
-#ifndef CONVEX_HULL_H
-#define CONVEX_HULL_H
+#ifndef JARVIS_MARCH_H
+#define JARVIS_MARCH_H
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -32,23 +32,20 @@
 
 /* 2차원 벡터를 나타내는 구조체. */
 typedef struct Vector2 {
-    long long int x;  // 2차원 벡터의 X 좌표.
-    long long int y;  // 2차원 벡터의 Y 좌표.
+    float x;  // 2차원 벡터의 X 좌표.
+    float y;  // 2차원 벡터의 Y 좌표.
 } Vector2;
 
-#endif // `RAYLIB_H`
+#endif
 
 /* | 라이브러리 함수... | */
 
 /* 선물 포장 알고리즘을 이용하여, 볼록 껍질을 생성한다. */
 int jarvis_march(const Vector2 *arr, int n, Vector2 *hull);
 
-/* 그레이엄 스캔 알고리즘을 이용하여, 볼록 껍질을 생성한다. */
-int graham_scan(const Vector2 *arr, int n, Vector2 *hull);
+#endif // `JARVIS_MARCH_H`
 
-#endif // `CONVEX_HULL_H`
-
-#ifdef CONVEX_HULL_IMPLEMENTATION
+#ifdef JARVIS_MARCH_IMPLEMENTATION
 
 /* | 라이브러리 함수... | */
 
@@ -139,4 +136,4 @@ int graham_scan(const Vector2 *arr, int n, Vector2 *hull) {
     /* TODO: ... */
 }
 
-#endif // `CONVEX_HULL_IMPLEMENTATION`
+#endif // `JARVIS_MARCH_IMPLEMENTATION`
