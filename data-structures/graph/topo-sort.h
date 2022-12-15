@@ -163,7 +163,6 @@ void graph_topo_sort(Graph *g) {
 
     g->stack.length = 0;
 
-    // 위상 정렬의 본질은 결국 "깊이 우선 탐색"이다.
     for (int i = 0; i < g->vertex_count; i++)
         if (!g->visited[i]) _graph_dfs(g, i);
 

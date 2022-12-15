@@ -20,10 +20,12 @@
     SOFTWARE.
 */
 
+/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/graham-scan.out` */
+
 #include "raylib.h"
 
-#define JARVIS_MARCH_IMPLEMENTATION
-#include "jarvis-march.h"
+#define GRAHAM_SCAN_IMPLEMENTATION
+#include "graham-scan.h"
 
 #define TARGET_FPS       60
 
@@ -39,10 +41,8 @@ typedef struct {
 
 static void GenerateHull(const PtArray *input, PtArray *output);
 
-/* `valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 ./bin/jarvis-march.out` */
-
 int main(void) {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "jdeokkim/algoitni | jarvis-march.c");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "jdeokkim/algoitni | graham-scan.c");
 
     SetTargetFPS(TARGET_FPS);
 
@@ -53,7 +53,7 @@ int main(void) {
     output.points = RL_MALLOC(output.count * sizeof(*(output.points)));
 
     GenerateHull(&input, &output);
-    
+
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_R)) GenerateHull(&input, &output);
 
@@ -88,10 +88,17 @@ int main(void) {
                 DrawLineEx(
                     output.points[i], 
                     output.points[(i + 1) % output.count], 
-                    1.0f, 
+                    2.0f, 
                     DARKGREEN
                 );
             }
+
+            DrawLineEx(
+                (Vector2) { 0.0f, output.points[0].y },
+                (Vector2) { SCREEN_WIDTH, output.points[0].y },
+                1.0f,
+                Fade(DARKGREEN, 0.5f)
+            );
         }
 
         DrawFPS(8, 8);
@@ -116,5 +123,5 @@ static void GenerateHull(const PtArray *input, PtArray *output) {
         input->points[i].y = GetRandomValue(offset, SCREEN_HEIGHT - offset);
     }
 
-    output->count = jarvis_march(input->points, input->count, output->points);
+    output->count = graham_scan(input->points, input->count, output->points);
 }

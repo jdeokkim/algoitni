@@ -23,9 +23,6 @@
 #ifndef JARVIS_MARCH_H
 #define JARVIS_MARCH_H
 
-#include <stdbool.h>
-#include <stdlib.h>
-
 /* | 자료형 선언 및 정의... | */
 
 #ifndef RAYLIB_H
@@ -41,11 +38,13 @@ typedef struct Vector2 {
 /* | 라이브러리 함수... | */
 
 /* 선물 포장 알고리즘을 이용하여, 볼록 껍질을 생성한다. */
-int jarvis_march(const Vector2 *arr, int n, Vector2 *hull);
+int jarvis_march(const Vector2 *points, int n, Vector2 *result);
 
 #endif // `JARVIS_MARCH_H`
 
 #ifdef JARVIS_MARCH_IMPLEMENTATION
+
+#include <stdlib.h>
 
 /* | 라이브러리 함수... | */
 
@@ -77,22 +76,22 @@ static long long int vector2_length_sqr(Vector2 v1, Vector2 v2) {
 } 
 
 /* 선물 포장 알고리즘을 이용하여, 볼록 껍질을 생성한다. */
-int jarvis_march(const Vector2 *arr, int n, Vector2 *hull) {
-    if (arr == NULL || hull == NULL || n < 3) return 0;
+int jarvis_march(const Vector2 *points, int n, Vector2 *result) {
+    if (points == NULL || n < 3 || result == NULL) return 0;
     
-    int leftmost_index = 0, result = 0;
+    int lowest_index = 0, count = 0;
 
     // 먼저 가장 왼쪽에 있는 점을 찾는다.
     for (int i = 1; i < n; i++)
-        if (arr[leftmost_index].x > arr[i].x)
-            leftmost_index = i;
+        if (points[lowest_index].x > points[i].x)
+            lowest_index = i;
 
     // 이 점이 볼록 껍질의 첫 번째 점이 된다.
-    hull[result++] = arr[leftmost_index];
+    result[count++] = points[lowest_index];
 
     int current_index, next_index;
 
-    current_index = next_index = leftmost_index;
+    current_index = next_index = lowest_index;
 
     for (;;) {
         // 점 하나를 선택한다.
@@ -108,32 +107,27 @@ int jarvis_march(const Vector2 *arr, int n, Vector2 *hull) {
         for (int i = 0; i < n; i++) {
             if (i == current_index || i == next_index) continue;
 
-            const int direction = vector2_ccw(arr[current_index], arr[i], arr[next_index]);
+            const int direction = vector2_ccw(
+                points[current_index], points[i], points[next_index]
+            );
 
             // 세 점이 일직선 위에 있을 경우, 거리의 제곱을 비교한다.
-            const int compare_lengths = vector2_length_sqr(arr[current_index], arr[i]) 
-                > vector2_length_sqr(arr[current_index], arr[next_index]);
+            const int on_one_line = vector2_length_sqr(points[current_index], points[i])
+                > vector2_length_sqr(points[current_index], points[next_index]);
 
-            if (direction > 0 || (direction == 0 && compare_lengths))
+            if (direction > 0 || (direction == 0 && on_one_line))
                 next_index = i;
         }
 
         // 첫 번째 점으로 다시 되돌아왔다면, 볼록 껍질 생성이 완료된 것이다.
-        if (next_index == leftmost_index) break;
+        if (next_index == lowest_index) break;
 
         current_index = next_index;
         
-        hull[result++] = arr[next_index];
+        result[count++] = points[next_index];
     }
 
-    return result;
-}
-
-/* 그레이엄 스캔 알고리즘을 이용하여, 볼록 껍질을 생성한다. */
-int graham_scan(const Vector2 *arr, int n, Vector2 *hull) {
-    if (arr == NULL || hull == NULL || n < 3) return 0;
-
-    /* TODO: ... */
+    return count;
 }
 
 #endif // `JARVIS_MARCH_IMPLEMENTATION`
