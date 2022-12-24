@@ -85,15 +85,6 @@ main(c){
 }
 ```
 
-```c
-main(c){
-//  for(;scanf("%c",&c),c!='\n';)printf("%c\n",c);
-//  for(;scanf("%c",&c),c!=10;)printf("%c\n",c);
-//  for(;scanf("%c",&c),c^10;)printf("%c\n",c);
-    for(;c=getchar()-10;)printf("%c\n",c+10);
-}
-```
-
 <br />
 
 - 여러 개의 문자를 하나씩 입력받을 때는 `" %c"`를 이용하여 모든 공백 문자를 무시할 수 있다.
@@ -252,7 +243,7 @@ main(){
 
 ```c
 main(i){
-//  for(int i=1;i<=5;i++)putchar('a');
+//  for(int i=0;i<6;i++)putchar('a');
     for(;i<6;i++)putchar('a');
 }
 ```
@@ -271,7 +262,7 @@ main(i){
 ```c
 main(i,j){
 //  for(;i++<7;)scanf("%d",&j),printf("%d ",j);
-    for(;scanf("%d",&j)>0;i++)printf("%d ",j);
+    for(;scanf("%d",&j)>0;)printf("%d ",j);
 }
 ```
 
@@ -291,6 +282,24 @@ v[]={1,2,3};main(i){
 //  printf("%d\n",v[0]);
     printf("%d\n",*v);
 }
+```
+
+<br />
+
+- 배열의 크기를 지정할 때는 숫자 이외에도 [컴파일 시에 값이 정해지는 모든 정수형 상수 표현식 (compile-time integer constant expression)](https://en.cppreference.com/w/c/language/constant_expression)을 사용할 수 있다.
+
+```c
+Z[100001];main(){}
+```
+
+```c
+// (배열의 크기가 100001 이상이기만 하면 상관없는 경우라고 가정한다.)
+Z[1<<17];main(){}
+```
+
+```c
+// (Multi-character constants, implementation-specific.)
+Z['   '];main(){}
 ```
 
 <br />
@@ -316,7 +325,7 @@ main(n){char s[100];scanf("%d",&n);for(;n--;)scanf("%s",s),puts(s);}
 ```
 
 ```c
-s[100];main(n){scanf("%d",&n);for(;n--;)scanf("%s",s),puts(s);}
+s[100];main(n){scanf("%d",&n);for(;n--;)scanf("%ls",s),puts(s);}
 ```
 
 <br />
@@ -336,8 +345,11 @@ i;main(){char*s="RUN";
 ## 참고 자료
 
 - https://blog.merovius.de/posts/2013-10-11-how-to-cgolf/
+- https://codegolf.stackexchange.com/questions/132/tips-for-golfing-in-c
 - https://codegolf.stackexchange.com/questions/2203/tips-for-golfing-in-c
+- https://codegolf.stackexchange.com/questions/79947/better-way-to-read-multiple-int-in-c-than-scanf
 - https://en.cppreference.com/w/c/language/function_definition
 - https://en.cppreference.com/w/c/language/main_function
 - https://en.cppreference.com/w/c/language/operator_precedence
+- https://gcc.gnu.org/onlinedocs/cpp/Implementation-defined-behavior.html
 - http://graphics.stanford.edu/~seander/bithacks.html
