@@ -255,7 +255,8 @@ main(i){
 ```c
 main(i){
 //  for(;i<6;i++)putchar('a');
-    for(;i++<6;)putchar('a');
+//  for(;i++<6;)putchar('a');
+    for(;i++<6;)putchar(97);
 }
 ```
 
@@ -330,7 +331,7 @@ s[100];main(n){scanf("%d",&n);for(;n--;)scanf("%ls",s),puts(s);}
 
 <br />
 
-- 문자열의 끝을 확인할 때는 `strlen()` 함수를 사용하는 대신, 각 문자가 널 문자인지를 검사하는 것이 좋다.
+- 문자열의 끝을 확인할 때는 `strlen()` 함수를 사용하는 대신, 각 문자가 널 문자 (`'\0'`)인지를 검사하는 것이 좋다.
 
 ```c
 i;main(){char*s="RUN";
@@ -341,6 +342,21 @@ i;main(){char*s="RUN";
 ```
 
 <br />
+
+- 문자열 중간에 널 문자를 끼워넣으면 여러 개의 부분 문자열 중에 하나만을 출력할 수 있다.
+
+```c
+i;main(){
+/* `i`의 값은 0 또는 8이라고 가정한다. */
+
+//  if(i==8)puts("catalan");else puts("dawn");
+//  if(i^8)puts("dawn");else puts("catalan");
+//  puts(i^8?"dawn":"catalan");
+    puts("catalan\0dawn"+i);
+}
+```
+
+</br>
 
 ## 참고 자료
 

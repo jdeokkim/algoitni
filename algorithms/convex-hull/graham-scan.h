@@ -60,6 +60,7 @@ static int vector2_ccw(Vector2 v1, Vector2 v2, Vector2 v3) {
     const float lhs = (v2.y - v1.y) * (v3.x - v1.x);
     const float rhs = (v3.y - v1.y) * (v2.x - v1.x);
 
+    // -1이면 시계 방향, 0이면 일직선 상에 위치, 1이면 반시계 방향.
     return (lhs > rhs) - (lhs < rhs);
 }
 
@@ -70,14 +71,14 @@ static int compare_points(const void *a, const void *b) {
     int ccw = vector2_ccw((Vector2) { 0.0f }, *p, *q);
 
     if (ccw == 0) return (q->x * q->x + q->y * q->y) >= (p->x * p->x + p->y * p->y) ? 1 : -1;
-    else return (ccw == 1) ? 1 : -1;
+    else return (ccw == 1) ? -1 : 1;
 }
 
 /* 그레이엄 스캔 알고리즘을 이용하여, 볼록 껍질을 생성한다. */
 int graham_scan(Vector2 *points, int n, Vector2 *result) {
     if (points == NULL || n < 3 || result == NULL) return 0;
 
-    int lowest_index = 0, count = 0;
+    int lowest_index = 0, count = 3;
 
     /*
         먼저 가장 아래에 있는 점을 찾는다. 이때, 그러한 점이 여러 개인 경우에는
@@ -95,7 +96,7 @@ int graham_scan(Vector2 *points, int n, Vector2 *result) {
     points[0] = points[lowest_index];
     points[lowest_index] = temp;
 
-    // 각 점을 평행 이동시킨다.
+    // `qsort()` 함수를 전역 변수 없이 사용하기 위해, 각 점을 평행 이동시킨다.
     for (int i = 1; i < n; i++)
         points[i].x -= points[0].x, points[i].y -= points[0].y;
 
@@ -105,7 +106,32 @@ int graham_scan(Vector2 *points, int n, Vector2 *result) {
     for (int i = 1; i < n; i++)
         points[i].x += points[0].x, points[i].y += points[0].y;
 
-    /* TODO: ... */
+    int new_size = 1;
+
+    // 각도가 같은 점이 여러 개가 있다면, 정렬 기준점과 거리가 가장 먼 점만을 선택한다.
+    for (int i = 1; i < n; i++) {
+        while ((i < n - 1)
+            && vector2_ccw(points[0], points[i], points[i + 1]) == 0) i++;
+
+        points[new_size++] = points[i];
+    }
+
+    n = new_size;
+
+    if (n < 3) return 0;
+
+    result[0] = points[0];
+    result[1] = points[1];
+    result[2] = points[2];
+
+    // 이제 세 점을 제외한 나머지 점들을 확인한다.
+    for (int i = 3; i < n; i++) {
+        while (count > 1 
+            && vector2_ccw(result[count - 2], result[count - 1], points[i]) <= 0)
+            count--;
+
+        result[count++] = points[i];
+    }
 
     return count;
 }

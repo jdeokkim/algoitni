@@ -32,7 +32,7 @@
 #define SCREEN_WIDTH     800
 #define SCREEN_HEIGHT    600
 
-#define MAX_POINT_COUNT  64
+#define MAX_POINT_COUNT  512
 
 typedef struct {
     Vector2 *points;
@@ -88,7 +88,7 @@ int main(void) {
                 DrawLineEx(
                     output.points[i], 
                     output.points[(i + 1) % output.count], 
-                    2.0f, 
+                    1.0f, 
                     DARKGREEN
                 );
             }
@@ -97,7 +97,7 @@ int main(void) {
                 (Vector2) { 0.0f, output.points[0].y },
                 (Vector2) { SCREEN_WIDTH, output.points[0].y },
                 1.0f,
-                Fade(DARKGREEN, 0.5f)
+                Fade(DARKGREEN, 0.35f)
             );
         }
 
