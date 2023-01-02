@@ -97,17 +97,6 @@ main(c){
 
 <br />
 
-- **[`%n` 형식 지정자](https://en.cppreference.com/w/c/io/fscanf)를 이용하면, `strlen()` 함수 없이도 문자열의 길이를 구할 수 있다.**
-
-```c
-char S[100];main(c){
-//  scanf(" %s",S);c=strlen(S);
-    scanf(" %s%n",S,&c);
-}
-```
-
-<br />
-
 - **`gets()` 함수는 [C 프로그래밍을 할 때 절대로 사용해서는 안되는 위험한 함수 중 하나지만](https://stackoverflow.com/questions/1694036/why-is-the-gets-function-so-dangerous-that-it-should-not-be-used)**, 숏코딩을 할 때만큼은 유용하게 사용할 수 있다.
 
 ```c
@@ -121,7 +110,7 @@ S[21];main(){
 
 <br />
 
-- 문자를 출력할 때는 문자 리터럴 (character literal) 대신 그 문자에 대응하는 ASCII 코드를 사용할 수 있다.
+- 문자를 출력할 때는 문자 리터럴 (character literal) 대신 그 문자에 대응하는 ASCII 코드를 이용할 수 있다.
 
 ```c
 main(){
@@ -132,7 +121,7 @@ main(){
 
 <br />
 
-- **형식 문자열이 없는 단순 문자열을 출력**할 때는 `printf()` 대신 [`puts()`](https://en.cppreference.com/w/c/io/puts)를 사용할 수 있는데, `puts()` 함수는 마지막에 개행 문자를 출력한다는 점에 유의하도록 한다.
+- **형식 문자열이 없는 단순 문자열을 출력**할 때는 `printf()` 대신 [`puts()`](https://en.cppreference.com/w/c/io/puts)를 사용할 수 있는데, `puts()` 함수는 마지막에 개행 문자를 출력한다는 점에 유의해야 한다.
 
 ```c
 main(){
@@ -207,6 +196,13 @@ main(a,b){
 
 //  puts(a>=b?"true":"false");
     puts(a/b?"true":"false");
+}
+```
+
+```c
+main(a,b){
+//  scanf("%d",&a);puts(a<=2?"true":"false");
+    puts(2*scanf("%d",&a)/a?"true":"false");
 }
 ```
 
@@ -343,7 +339,7 @@ i;main(){char*s="RUN";
 
 <br />
 
-- 문자열 중간에 널 문자를 끼워넣으면 여러 개의 부분 문자열 중에 하나만을 출력할 수 있다.
+- 문자열 중간에 널 문자 (`'\0'`)를 끼워넣으면 여러 개의 부분 문자열 중에 하나만을 출력할 수 있다.
 
 ```c
 i;main(){
@@ -358,11 +354,35 @@ i;main(){
 
 </br>
 
+- `printf()` 함수를 사용할 때 형식 지정자의 [정밀도 (precision) 속성](https://en.cppreference.com/w/c/io/fprintf)을 이용하면 문자열의 일부분만을 출력할 수 있다.
+
+```c
+S[100],i;main(){
+//  scanf("%ls",S);for(;i<5;i++)putchar(S[i]);
+//  scanf("%ls",S),printf("%.*ls",5,S);
+    scanf("%ls",S),printf("%.5ls",S);
+}
+```
+
+</br>
+
+- **`scanf()` 함수를 사용할 때 [`%n` 형식 지정자](https://en.cppreference.com/w/c/io/fscanf)를 이용하면 `strlen()` 함수 없이도 문자열의 길이를 구할 수 있다.**
+
+```c
+S[100];main(c){
+//  scanf("%ls",S);c=strlen(S);
+    scanf("%ls%n",S,&c);
+}
+```
+
+<br />
+
 ## 참고 자료
 
 - https://blog.merovius.de/posts/2013-10-11-how-to-cgolf/
 - https://codegolf.stackexchange.com/questions/132/tips-for-golfing-in-c
 - https://codegolf.stackexchange.com/questions/2203/tips-for-golfing-in-c
+- https://codegolf.stackexchange.com/questions/51019/shift-characters-in-a-string
 - https://codegolf.stackexchange.com/questions/79947/better-way-to-read-multiple-int-in-c-than-scanf
 - https://en.cppreference.com/w/c/language/function_definition
 - https://en.cppreference.com/w/c/language/main_function
