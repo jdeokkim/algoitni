@@ -34,14 +34,15 @@
             "}"
         ],
     },
-    "c-compare": {
-        "prefix": "!c-compare",
+    "c-geom-ccw": {
+        "prefix": "!c-geom-ccw",
         "body": [
-            "int compare_values(const void *a, const void *b) {",
-            "\t${1:int} x = *(const ${2:int} *) a;",
-            "\t${3:int} y = *(const ${4:int} *) b;",
+            "int vector2_ccw(Vector2 v1, Vector2 v2, Vector2 v3) {",
+            "\tconst ${1:int} lhs = (v2.y - v1.y) * (v3.x - v1.x);",
+            "\tconst ${2:int} rhs = (v3.y - v1.y) * (v2.x - v1.x);",
             "",
-            "\treturn (${5:x} > ${6:y}) - (${7:x} < ${8:y});",
+            "\t// `-1` if clockwise, `0` if collinear, `1` if counter-clockwise",
+            "\treturn (lhs > rhs) - (lhs < rhs);",
             "}"
         ]
     },
@@ -300,6 +301,17 @@
             "\trb->start = (rb->start + 1) % rb->capacity;",
             "",
             "\treturn v;",
+            "}"
+        ]
+    },
+    "c-sort-cmp": {
+        "prefix": "!c-sort-cmp",
+        "body": [
+            "int compare_values(const void *a, const void *b) {",
+            "\t${1:int} x = *(const ${2:int} *) a;",
+            "\t${3:int} y = *(const ${4:int} *) b;",
+            "",
+            "\treturn (${5:x} > ${6:y}) - (${7:x} < ${8:y});",
             "}"
         ]
     },
