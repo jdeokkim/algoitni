@@ -32,7 +32,27 @@
             "",
             "\treturn 0;",
             "}"
-        ],
+        ]
+    },
+    "c-geom-aabb": {
+        "prefix": "!c-geom-aabb",
+        "body": [
+            "Rectangle poly_get_aabb(Polygon *s) {",
+            "\tif (s == NULL || s->n <= 2) return (Rectangle) { 0 };",
+            "",
+            "\tVector2 min = s->vertices[0], max = min;",
+            "",
+            "\tfor (int i = 1; i < s->n; i++) {",
+            "\t\tif (min.x > s->vertices[i].x) min.x = s->vertices[i].x;",
+            "\t\tif (min.y > s->vertices[i].y) min.y = s->vertices[i].y;",
+            "\t\t\t",
+            "\t\tif (max.x < s->vertices[i].x) max.x = s->vertices[i].x;",
+            "\t\tif (max.y < s->vertices[i].y) max.y = s->vertices[i].y;",
+            "\t}",
+            "",
+            "\treturn (Rectangle) { min.x, min.y, max.x - min.x, max.y - min.y };",
+            "}"
+        ]
     },
     "c-geom-ccw": {
         "prefix": "!c-geom-ccw",
@@ -41,7 +61,7 @@
             "\tconst ${1:int} lhs = (v2.y - v1.y) * (v3.x - v1.x);",
             "\tconst ${2:int} rhs = (v3.y - v1.y) * (v2.x - v1.x);",
             "",
-            "\t// `-1` if clockwise, `0` if collinear, `1` if counter-clockwise",
+            "\t// NOTE: `-1` if clockwise, `0` if collinear, `1` if counter-clockwise",
             "\treturn (lhs > rhs) - (lhs < rhs);",
             "}"
         ]
@@ -370,7 +390,7 @@
             "",
             "\tif (p == uf->id[p]) return p;",
             "",
-            "\t// weighted quick-union with path compression",
+            "\t// NOTE: Weighted quick-union with path compression",
             "\treturn uf->id[p] = uf_find(uf, uf->id[p]);",
             "}"
         ]
