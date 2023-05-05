@@ -187,8 +187,8 @@
             "}"
         ]
     },
-    "c-heap": {
-        "prefix": "!c-heap",
+    "c-heap-min": {
+        "prefix": "!c-heap-min",
         "body": [
             "#define HEAP_ELEMENT_TYPE   ${1:int}",
             "#define HEAP_INIT_CAPACITY  ${2:8}",
@@ -202,7 +202,7 @@
             "\tHeap *h = malloc(sizeof *h);",
             "",
             "\th->capacity = HEAP_INIT_CAPACITY, h->length = 0;",
-            "\th->ptr = malloc(h->capacity * sizeof *(h->ptr));",
+            "\th->ptr = calloc(h->capacity, sizeof *(h->ptr));",
             "",
             "\treturn h;",
             "}",
@@ -227,7 +227,7 @@
             "\t{",
             "\t\tint k = h->length;",
             "",
-            "\t\twhile (${3:h->ptr[k] < h->ptr[k / 2]}) {",
+            "\t\twhile (k > 1 && ${3:h->ptr[k] < h->ptr[k / 2]}) {",
             "\t\t\tHEAP_ELEMENT_TYPE t = h->ptr[k];",
             "",
             "\t\t\th->ptr[k] = h->ptr[k / 2];",
