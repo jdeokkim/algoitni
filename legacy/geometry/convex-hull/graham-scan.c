@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2022 Jaedeok Kim (https://github.com/jdeokkim)
+    Copyright (c) 2022-2023 Jaedeok Kim (https://github.com/jdeokkim)
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

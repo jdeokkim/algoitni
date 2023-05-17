@@ -57,13 +57,36 @@
     "c-geom-ccw": {
         "prefix": "!c-geom-ccw",
         "body": [
-            "int vector2_ccw(Vector2 v1, Vector2 v2, Vector2 v3) {",
-            "\tconst ${1:int} lhs = (v2.y - v1.y) * (v3.x - v1.x);",
-            "\tconst ${2:int} rhs = (v3.y - v1.y) * (v2.x - v1.x);",
+            "inline int vector2_ccw(Vector2 v1, Vector2 v2, Vector2 v3) {",
+            "\tconst ${1:int} lhs = (v3.y - v1.y) * (v2.x - v1.x);",
+            "\tconst ${2:int} rhs = (v2.y - v1.y) * (v3.x - v1.x);",
             "",
             "\t// NOTE: `-1` if clockwise, `0` if collinear, `1` if counter-clockwise",
             "\treturn (lhs > rhs) - (lhs < rhs);",
             "}"
+        ]
+    },
+    "c-geom-pit": {
+        "prefix": "!c-geom-pit",
+        "body": [
+            "int point_in_triangle(Polygon *s, Vector2 p) {",
+            "\tif (s == NULL || s->n != 3) return 0;",
+            "",
+            "\treturn (vector2_ccw(s->vertices[0], p, s->vertices[1]) <= 0)",
+            "\t\t&& (vector2_ccw(s->vertices[1], p, s->vertices[2]) <= 0)",
+            "\t\t&& (vector2_ccw(s->vertices[2], p, s->vertices[0]) <= 0);",
+            "}"
+        ]
+    },
+    "c-geom-poly": {
+        "prefix": "!c-geom-poly",
+        "body": [
+            "#define MAX_VERTEX_COUNT  ${1:8}",
+            "",
+            "typedef struct { ",
+            "\tVector2 vertices[MAX_VERTEX_COUNT];",
+            "\tint n;",
+            "} Polygon;"
         ]
     },
     "c-graph-fill": {
