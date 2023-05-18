@@ -2,7 +2,13 @@
 
 ## 삼각형 내부의 점 판정
 
-- 삼각형의 세 점 `a`, `b`, `c`가 반시계 방향으로 정렬되어 있다고 가정할 때, 임의의 점 `p`가 삼각형 내부에 있는지 확인하기 위해서는 `vector2_ccw(a, p, b) <= 0 && vector2_ccw(b, p, c) <= 0 && vector2_ccw(c, p, a) <= 0`의 값이 참인지를 확인하면 된다.
+<!--
+
+<img src="" alt="삼각형 내부의 점 판정"><br>
+
+-->
+
+삼각형의 세 점 `a`, `b`, `c`가 반시계 방향으로 정렬되어 있다고 가정할 때, 임의의 점 `p`가 삼각형 내부에 있는지 확인하기 위해서는 `vector2_ccw(a, p, b) <= 0 && vector2_ccw(b, p, c) <= 0 && vector2_ccw(c, p, a) <= 0`의 값이 참인지를 확인하면 된다.
 
 ```c
 inline int vector2_ccw(Vector2 v1, Vector2 v2, Vector2 v3) {
@@ -26,7 +32,13 @@ int point_in_triangle(Polygon *s, Vector2 p) {
 
 ## 볼록 다각형 내부의 점 판정
 
-- 이분 탐색 알고리즘을 이용하면 볼록 다각형 내부의 점 판정을 $O(\log N)$의 평균 시간 복잡도로 끝낼 수 있다.
+<!--
+
+<img src="" alt="볼록 다각형 내부의 점 판정"><br>
+
+-->
+
+이분 탐색 알고리즘을 이용하면 볼록 다각형 내부의 점 판정을 $O(\log N)$의 평균 시간 복잡도로 끝낼 수 있다.
 
 ```c
 int point_in_convex(Polygon *s, Vector2 p) {
@@ -65,9 +77,11 @@ int point_in_convex(Polygon *s, Vector2 p) {
 }
 ```
 
+<br />
+
 ## 참고 자료
 
-- [cp-algorithms.com: Check if point belongs to the convex polygon in $O(\log N)$](https://cp-algorithms.com/geometry/point-in-convex-polygon.html)
+- [cp-algorithms.com: Check if point belongs to the convex polygon in `O(log N)`](https://cp-algorithms.com/geometry/point-in-convex-polygon.html)
 - [zhu45.com: How to write binary search correctly](https://zhu45.org/posts/2018/Jan/12/how-to-write-binary-search-correctly/)
 
 <br />

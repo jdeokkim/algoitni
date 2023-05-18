@@ -34,6 +34,22 @@
             "}"
         ]
     },
+    "c-force-inline": {
+        "prefix": "!c-force-inline",
+        "body": [
+            "#ifdef _MSC_VER",
+            "\t#define FORCE_INLINE __forceinline",
+            "#elif defined(__GNUC__)",
+            "\t#if defined(__STRICT_ANSI__)",
+            "\t\t#define FORCE_INLINE __inline__ __attribute__((always_inline))",
+            "\t#else",
+            "\t\t#define FORCE_INLINE inline __attribute__((always_inline))",
+            "\t#endif",
+            "#else",
+            "\t#define FORCE_INLINE inline",
+            "#endif"
+        ]
+    },
     "c-geom-aabb": {
         "prefix": "!c-geom-aabb",
         "body": [
@@ -66,6 +82,90 @@
             "}"
         ]
     },
+    "c-geom-lines": {
+        "prefix": "!c-geom-lines",
+        "body": [
+            "typedef struct { Vector2 origin, direction; } Ray;",
+            "",
+            "int compute_intersection_rays(Ray m, Ray n, float *_t) {",
+            "\tconst float rXs = vector2_cross(m.direction, n.direction);",
+            "",
+            "\tconst Vector2 qp = vector2_subtract(n.origin, m.origin);",
+            "",
+            "\tconst float qpXs = vector2_cross(qp, n.direction);",
+            "\tconst float qpXr = vector2_cross(qp, m.direction);",
+            "",
+            "\tif (rXs != 0.0f) {",
+            "\t\tconst float _rXs = 1.0f / rXs;",
+            "",
+            "\t\tconst float t = qpXs * _rXs, u = qpXr * _rXs;",
+            "",
+            "\t\tif ((t >= 0.0f && t <= 1.0f) && (u >= 0.0f && u <= 1.0f)) {",
+            "\t\t\tif (_t != NULL) *_t = t;",
+            "",
+            "\t\t\treturn 1;",
+            "\t\t}",
+            "",
+            "\t\treturn 0;",
+            "\t} else {",
+            "\t\tif (qpXr != 0.0f) return 0;",
+            "",
+            "\t\tconst float rDr = vector2_dot(m.direction, m.direction);",
+            "\t\tconst float sDr = vector2_dot(n.direction, m.direction);",
+            "",
+            "\t\tconst float _rDr = 1.0f / rDr;",
+            "",
+            "\t\tconst float qpDr = vector2_dot(qp, m.direction);",
+            "",
+            "\t\tfloat k, t0 = qpDr * _rDr, t1 = t0 + sDr * _rDr;",
+            "",
+            "\t\tif (sDr < 0.0f) k = t0, t0 = t1, t1 = k;",
+            "",
+            "\t\tif ((t0 < 0.0f && t1 == 0.0f) || (t0 == 1.0f && t1 > 1.0f)) {",
+            "\t\t\tif (_t != NULL) *_t = (t0 == 1.0f) ? 1.0f : 0.0f;",
+            "",
+            "\t\t\treturn 1;",
+            "\t\t}",
+            "",
+            "\t\treturn 2 * (t1 >= 0.0 && t0 <= 1.0);",
+            "\t}",
+            "}"
+        ]
+    },
+    "c-geom-pic": {
+        "prefix": "!c-geom-pic",
+        "body": [
+            "int point_in_convex(Polygon *s, Vector2 p) {",
+            "\tif (s == NULL || s->n < 3) return 0;",
+            "",
+            "\tconst int c1 = vector2_ccw(s->vertices[0], p, s->vertices[1]);",
+            "\tconst int c2 = vector2_ccw(s->vertices[0], p, s->vertices[s->n - 1]);",
+            "",
+            "\tif (c1 > 0 || c2 < 0) return 0;",
+            "",
+            "\tint low = 0, high = s->n - 1;",
+            "",
+            "\twhile (high - low > 1) {",
+            "\t\tconst int mid = low + (high - low) / 2;",
+            "",
+            "\t\tif (vector2_ccw(s->vertices[0], p, s->vertices[mid]) > 0) high = mid;",
+            "\t\telse low = mid;",
+            "\t}",
+            "",
+            "\tconst int r1 = vector2_ccw(s->vertices[0], p, s->vertices[low]);",
+            "\tconst int r2 = vector2_ccw(s->vertices[low], p, s->vertices[low + 1]);",
+            "\tconst int r3 = vector2_ccw(s->vertices[low + 1], p, s->vertices[0]);",
+            "",
+            "\tif ((!r1 && !r2) || (!r1 && !r3) || (!r2 && !r3)) return -1;",
+            "",
+            "\tif ((low == 1 && !r1 && (r2 * r3 >= 0))",
+            "\t\t|| (low + 1 == s->n - 1 && !r3 && (r1 * r2 >= 0))",
+            "\t\t|| (!r2 && (r1 * r3 >= 0))) return -1;",
+            "",
+            "\treturn (r1 <= 0 && r2 <= 0 && r3 <= 0);",
+            "}"
+        ]
+    },
     "c-geom-pit": {
         "prefix": "!c-geom-pit",
         "body": [
@@ -87,6 +187,34 @@
             "\tVector2 vertices[MAX_VERTEX_COUNT];",
             "\tint n;",
             "} Polygon;"
+        ]
+    },
+    "c-geom-vec2": {
+        "prefix": "!c-geom-vec2",
+        "body": [
+            "#ifndef RAYLIB_H",
+            "typedef struct { float x, y; } Vector2;",
+            "#endif",
+            "",
+            "inline Vector2 vector2_add(Vector2 v1, Vector2 v2) {",
+            "\treturn (Vector2) { v1.x + v2.x, v1.y + v2.y };",
+            "}",
+            "",
+            "inline Vector2 vector2_subtract(Vector2 v1, Vector2 v2) {",
+            "\treturn (Vector2) { v1.x - v2.x, v1.y - v2.y };",
+            "}",
+            "",
+            "inline Vector2 vector2_scalar_multiply(Vector2 v, float s) {",
+            "\treturn (Vector2) { v.x * s, v.y * s };",
+            "}",
+            "",
+            "inline float vector2_cross(Vector2 v1, Vector2 v2) {",
+            "\treturn (v1.x * v2.y) - (v1.y * v2.x);",
+            "}",
+            "",
+            "inline float vector2_dot(Vector2 v1, Vector2 v2) {",
+            "\treturn (v1.x * v2.x) + (v1.y * v2.y);",
+            "}"
         ]
     },
     "c-graph-fill": {
