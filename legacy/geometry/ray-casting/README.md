@@ -121,7 +121,45 @@ int compute_intersection_rays(Ray m, Ray n, float *_t) {
 
 -->
 
-- ...
+```c
+typedef struct { Vector2 point; float dsq; } RaycastHit;
+
+int raycast_poly(const Polygon *s, Ray k, RaycastHit *r) {
+    if (s == NULL || s->n < 3) return 0;
+
+    int result = 0, intersection_count = 0;
+
+    if (r != NULL) r->point.x = r->point.y = r->dsq = INT_MAX;
+
+    for (int j = s->n - 1, i = 0; i < s->n; j = i, i++) {
+        const Ray l = { 
+            .origin = s->vertices[i],
+            .direction = vector2_subtract(s->vertices[j], s->vertices[i])
+        };
+
+        float t = 0.0f;
+
+        int intersects = compute_intersection_rays(k, l, &t);
+
+        if (intersects) {
+            result = 1, intersection_count++;
+
+            if (r != NULL && intersects == 1) {
+                const Vector2 point = vector2_add(
+                    k.origin, 
+                    vector2_scalar_multiply(k.direction, t)
+                );
+
+                const float dsq = vector2_distance_sq(k.origin, point);
+
+                if (r->dsq > dsq) r->point = point, r->dsq = dsq;
+            }
+        }
+    }
+
+    return result + (intersection_count & 1);
+}
+```
 
 <br />
 

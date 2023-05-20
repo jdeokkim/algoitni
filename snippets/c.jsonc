@@ -75,7 +75,7 @@
         "body": [
             "inline int vector2_ccw(Vector2 v1, Vector2 v2, Vector2 v3) {",
             "\tconst ${1:int} lhs = (v3.y - v1.y) * (v2.x - v1.x);",
-            "\tconst ${2:int} rhs = (v2.y - v1.y) * (v3.x - v1.x);",
+            "\tconst ${1:int} rhs = (v2.y - v1.y) * (v3.x - v1.x);",
             "",
             "\t// NOTE: `-1` if clockwise, `0` if collinear, `1` if counter-clockwise",
             "\treturn (lhs > rhs) - (lhs < rhs);",
@@ -85,9 +85,9 @@
     "c-geom-lines": {
         "prefix": "!c-geom-lines",
         "body": [
-            "typedef struct { Vector2 origin, direction; } Ray;",
+            "typedef struct { Vector2 origin, direction; } ${1:Ray};",
             "",
-            "int compute_intersection_rays(Ray m, Ray n, float *_t) {",
+            "int compute_intersection_rays(${1:Ray} m, ${1:Ray} n, float *_t) {",
             "\tconst float rXs = vector2_cross(m.direction, n.direction);",
             "",
             "\tconst Vector2 qp = vector2_subtract(n.origin, m.origin);",
@@ -132,8 +132,8 @@
             "}"
         ]
     },
-    "c-geom-pic": {
-        "prefix": "!c-geom-pic",
+    "c-geom-point-in-convex": {
+        "prefix": "!c-geom-point-in-convex",
         "body": [
             "int point_in_convex(Polygon *s, Vector2 p) {",
             "\tif (s == NULL || s->n < 3) return 0;",
@@ -166,8 +166,8 @@
             "}"
         ]
     },
-    "c-geom-pit": {
-        "prefix": "!c-geom-pit",
+    "c-geom-point-in-triangle": {
+        "prefix": "!c-geom-point-in-triangle",
         "body": [
             "int point_in_triangle(Polygon *s, Vector2 p) {",
             "\tif (s == NULL || s->n != 3) return 0;",
@@ -178,8 +178,8 @@
             "}"
         ]
     },
-    "c-geom-poly": {
-        "prefix": "!c-geom-poly",
+    "c-geom-polygon": {
+        "prefix": "!c-geom-polygon",
         "body": [
             "#define MAX_VERTEX_COUNT  ${1:8}",
             "",
@@ -189,11 +189,53 @@
             "} Polygon;"
         ]
     },
-    "c-geom-vec2": {
-        "prefix": "!c-geom-vec2",
+    "c-geom-raycast": {
+        "prefix": "!c-geom-raycast",
+        "body": [
+            "typedef struct { Vector2 point; float dsq; } RaycastHit;",
+            "",
+            "int raycast_poly(const Polygon *s, ${1:Ray} k, RaycastHit *r) {",
+            "\tif (s == NULL || s->n < 3) return 0;",
+            "",
+            "\tint result = 0, intersection_count = 0;",
+            "",
+            "\tif (r != NULL) r->point.x = r->point.y = r->dsq = INT_MAX;",
+            "",
+            "\tfor (int j = s->n - 1, i = 0; i < s->n; j = i, i++) {",
+            "\t\tconst ${1:Ray} l = { ",
+            "\t\t\t.origin = s->vertices[i],",
+            "\t\t\t.direction = vector2_subtract(s->vertices[j], s->vertices[i])",
+            "\t\t};",
+            "",
+            "\t\tfloat t = 0.0f;",
+            "",
+            "\t\tint intersects = compute_intersection_rays(k, l, &t);",
+            "",
+            "\t\tif (intersects) {",
+            "\t\t\tresult = 1, intersection_count++;",
+            "",
+            "\t\t\tif (r != NULL && intersects == 1) {",
+            "\t\t\t\tconst Vector2 point = vector2_add(",
+            "\t\t\t\t\tk.origin, ",
+            "\t\t\t\t\tvector2_scalar_multiply(k.direction, t)",
+            "\t\t\t\t);",
+            "",
+            "\t\t\t\tconst float dsq = vector2_distance_sq(k.origin, point);",
+            "",
+            "\t\t\t\tif (r->dsq > dsq) r->point = point, r->dsq = dsq;",
+            "\t\t\t}",
+            "\t\t}",
+            "\t}",
+            "",
+            "\treturn result + (intersection_count & 1);",
+            "}"
+        ]
+    },
+    "c-geom-vector2": {
+        "prefix": "!c-geom-vector2",
         "body": [
             "#ifndef RAYLIB_H",
-            "typedef struct { float x, y; } Vector2;",
+            "typedef struct { ${1:float} x, y; } Vector2;",
             "#endif",
             "",
             "inline Vector2 vector2_add(Vector2 v1, Vector2 v2) {",
@@ -204,16 +246,22 @@
             "\treturn (Vector2) { v1.x - v2.x, v1.y - v2.y };",
             "}",
             "",
-            "inline Vector2 vector2_scalar_multiply(Vector2 v, float s) {",
+            "inline Vector2 vector2_scalar_multiply(Vector2 v, ${1:float} s) {",
             "\treturn (Vector2) { v.x * s, v.y * s };",
             "}",
             "",
-            "inline float vector2_cross(Vector2 v1, Vector2 v2) {",
+            "inline ${1:float} vector2_cross(Vector2 v1, Vector2 v2) {",
             "\treturn (v1.x * v2.y) - (v1.y * v2.x);",
             "}",
             "",
-            "inline float vector2_dot(Vector2 v1, Vector2 v2) {",
+            "inline ${1:float} vector2_dot(Vector2 v1, Vector2 v2) {",
             "\treturn (v1.x * v2.x) + (v1.y * v2.y);",
+            "}",
+            "",
+            "inline ${1:float} vector2_distance_sq(Vector2 v1, Vector2 v2) {",
+            "\tconst Vector2 v = vector2_subtract(v1, v2);",
+            "",
+            "\treturn vector2_dot(v, v);",
             "}"
         ]
     },
