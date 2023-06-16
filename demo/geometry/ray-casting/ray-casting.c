@@ -159,7 +159,7 @@ static void DrawPolygon(Polygon *s, Color c) {
 }
 
 int main(void) {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "6pm-crew/play");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "jdeokkim/algoitni | ray-casting.c");
 
     SetTargetFPS(TARGET_FPS);
 

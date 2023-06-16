@@ -25,7 +25,7 @@
 _COLOR_BEGIN := $(shell tput setaf 16)
 _COLOR_END := $(shell tput sgr0)
 
-RAYLIB_PATH ?= ../../../../raylib
+RAYLIB_PATH ?= $(HOME)/raylib-dev/raylib
 
 PROJECT_NAME := algoitni
 PROJECT_FULL_NAME := jdeokkim/algoitni
